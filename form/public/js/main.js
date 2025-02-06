@@ -19,6 +19,6 @@ function example() {
   form.getComponent("lastName").setValue("Doe");
 }
 
-export { 
-  example,
+export {
+    example
 };

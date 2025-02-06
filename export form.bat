@@ -1,6 +1,6 @@
 @echo off
 
-set /p response=Convert custom_form.json to local Formio form? This will overwrite the files in the 'form/' directory. (Y/n)
+set /p response=Convert the current form to json format? This will overwrite 'custom_form.json'. (Y/n)
 
 :: If n or N or no or NO is entered, exit the script
 if /i "%response%"=="n" goto no
@@ -18,11 +18,10 @@ goto end
 :yes
 echo Converting form to JSON format...
 
-node conversion/convert_from_json.js
+node conversion/convert_to_json.js
 
-echo Conversion complete. Files in the 'form/' directory have been overwritten.
+echo Conversion complete. 'custom_form.json' has been overwritten.
 
-:: Wait for 5 seconds
-timeout /t 5
+pause
 
 :end
