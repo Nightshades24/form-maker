@@ -24,6 +24,54 @@ app.get('/api/modules', (req, res) => {
     res.json(moduleFiles);
 });
 
+// API to see if there is a custom action on form initialization
+app.get('/api/init', (req, res) => {
+    // Read the file content
+    const fileContent = fs.readFileSync('public/js/form.js', 'utf8');
+
+    // Extract the JSON from the Formio.createForm call
+    const components = fileContent.split(/\r?\n/).slice(2, -2).join("\n");
+    if (!components) {
+        console.log("No Formio.createForm config found.");
+        return;
+    }
+
+    const cleanedComponents = `[${components}]`
+        .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
+        // .replace(/\\"/g, '"')               // Convert escaped quotes (\") to normal quotes (")
+        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
+        .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
+    
+    // Parse the extracted JSON
+    const formConfig = JSON.parse(cleanedComponents);
+
+    // Ensure components exist
+    if (!formConfig || !Array.isArray(formConfig)) {
+        console.log("No components found in form.");
+        return;
+    }
+
+    const customActions = [];
+
+    // Iterate over components
+    formConfig.forEach(component => {
+        if (component.logic && Array.isArray(component.logic)) {
+            component.logic.forEach(logicBlock => {
+                if (logicBlock.trigger?.type === "event" && logicBlock.trigger.event === "dv-initialized") {
+                    logicBlock.actions.forEach(action => {
+                        if (action.type === "customAction" && action.customAction) {
+                            console.log("Custom action found:", action.customAction);
+                            customActions.push(action.customAction);
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    res.json(customActions);
+});
+
 // Start the server
 const PORT = 8080;
 app.listen(PORT, () => {

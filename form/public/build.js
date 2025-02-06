@@ -19,5 +19,18 @@ async function loadAllModules() {
     }
 }
 
-// Load modules when the page loads
-window.onload = loadAllModules;
+// Load modules when the page loads and then load the init actions
+window.onload = loadAllModules().then(() => { loadInitActions(); });
+
+async function loadInitActions() {
+  let form = window.Formio.forms[document.getElementsByClassName("formio-component-form")[0].id];
+  let data = form["_data"];
+
+    const response = await fetch('/api/init');
+    const customActions = await response.json();
+
+    for (const action of customActions) {
+        const customFunction = new Function('form', 'data', action);
+        customFunction(form, data);
+    }
+}
