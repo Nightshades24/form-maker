@@ -94,6 +94,22 @@ You can customize the form components and their properties in the `form/public/f
 
 You can add custom JavaScript functions in the `form/public/js/` directory. These functions can be used to add custom behavior to the form components. It should not be added to the `form.js` file, since the JavaScript in this file will be ignored at conversion.
 
+To declare a initializerFunction and get the form component and data object, you can use the following declarations:
+
+```javascript
+let form;
+let data;
+
+setTimeout(() => {
+  form = window.Formio.forms[document.getElementsByClassName("formio-component-form")[0].id];
+  data = form["_data"];
+
+  functionName();
+}, 100);
+```
+
+It is important to use a timeout and set it to 100ms to ensure that the form is fully loaded before the function is executed. This is because the DMS is slower that this local version. Not using a timeout will work locally, but not in the DMS.
+
 ### Adding New JavaScript Files
 All files in `form/public/js/` are bundled together at conversion (except for `form.js`). You can add new JavaScript files to this directory and they will be included in the bundle.
 **Don't forget to add a single line to every new JavaScript file you add which exports all the functions in the file.**

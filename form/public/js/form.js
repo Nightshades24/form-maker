@@ -32,24 +32,9 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
         {
             type: "button",
             action: "custom",
-            custom: "example(form, data)",
+            custom: "example()",
             label: "Click me!",
             theme: "primary",
-            logic: [
-                {
-                    name: "init",
-                    trigger: {
-                        type: "event",
-                        event: "dv-initialized",
-                    },
-                    actions: [
-                        {
-                            type: "custom",
-                            custom: "console.log('Form initialized!')",
-                        },
-                    ],
-                },
-            ],
         },
     ]
 });
