@@ -110,6 +110,8 @@ setTimeout(() => {
 
 It is important to use a timeout and set it to 100ms to ensure that the form is fully loaded before the function is executed. This is because the DMS is slower that this local version. Not using a timeout will work locally, but not in the DMS.
 
+Because this project is built using Webpack, you can use ES6 syntax and features in your JavaScript files. However, you should not use import statements in these files, as they will not work.
+
 ### Adding New JavaScript Files
 All files in `form/public/js/` are bundled together at conversion (except for `form.js`). You can add new JavaScript files to this directory and they will be included in the bundle.
 **Don't forget to add a single line to every new JavaScript file you add which exports all the functions in the file.**

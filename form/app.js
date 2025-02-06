@@ -28,7 +28,7 @@ app.get('/api/modules', (req, res) => {
 const PORT = 8080;
 app.listen(PORT, () => {
     console.info(` [server] server running at http://localhost:${PORT}`,);
-    console.info(' [server] close this terminal or press Ctrl+C to quit.');
+    console.info(' [server] close this terminal or press Ctrl+C to quit.\n');
 });
 
 // Reload browser when files change
