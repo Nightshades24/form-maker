@@ -33,7 +33,9 @@ npm run dev
 
 This will install the required dependencies and start the project in development mode. The project will be available at `http://localhost:8080`.
 
-To convert the form to JSON format for the DMS, execute `convert_to_json.bat`. This will generate a `custom_form.json` file containing the form definition in JSON format.
+To convert the form to JSON format for the DMS, execute `export.bat`. This will generate a `custom_form.json` file containing the form definition in JSON format.
+
+To convert a form downloaded from the DMS to the project format, make sure you named the form `custom_form.json` and then execute `import.bat`. This will generate the form in the project format.
 
 ## File Structure
 
@@ -42,11 +44,13 @@ The project has the following structure:
 ```
 form-maker/
 ├── conversion/
+│   ├── convert_from_json.js
 │   └── convert_to_json.js
 |
 ├── form/
 │   ├── node_modules/
 │   ├── public/
+|   │   ├── font-awesome/
 │   │   ├── js/
 │   │   |   ├── form.js
 │   │   |   └── main.js
@@ -63,7 +67,8 @@ form-maker/
 |
 ├── .gitattributes
 ├── .gitignore
-├── convert_to_json.bat
+├── export form.bat
+├── import form.bat
 ├── start.bat
 ├── custom_form.json
 ├── variables.json
