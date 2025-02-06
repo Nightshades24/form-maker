@@ -25,7 +25,7 @@ const functionNames = mainJsContent.match(/function\s+(\w+)\s*\(/g).map(match =>
 const objectNames = mainJsContent.match(/const\s+(\w+)\s*=\s*{/g).map(match => match.match(/const\s+(\w+)\s*=\s*{/)[1]);
 
 // Define the content of main.js to form/public/js/main.js and export the function names
-let mainJsExportContent = `${mainJsContent}\n\nexport {\n    ${functionNames.join(',\n    ')}\n};\n`;
+let mainJsExportContent = `${mainJsContent}`;
 
 // Write every object to form/public/js/objectName.js and export the objects
 objectNames.forEach(objectName => {
@@ -39,5 +39,10 @@ objectNames.forEach(objectName => {
     // Remove the object content from mainJsExportContent
     mainJsExportContent = mainJsExportContent.replace(objectContent, '');
 });
+
+// Get all variable names from main.js and export them
+const variableConst = mainJsExportContent.match(/^const\s+(\w+)\s*=\s*/gm).map(match => match.match(/^const\s+(\w+)\s*=\s*/)[1]);
+const variableLet = mainJsExportContent.match(/^let\s+(\w+)\s*=\s*/gm).map(match => match.match(/^let\s+(\w+)\s*=\s*/)[1]);
+mainJsExportContent = `${mainJsExportContent.trim()}\n\nexport {\n    ${functionNames.join(',\n    ')},\n    ${variableConst.join(',\n    ')},\n    ${variableLet.join(',\n    ')}\n};\n`;
 
 fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), mainJsExportContent);
