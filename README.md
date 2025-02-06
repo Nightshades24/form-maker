@@ -4,81 +4,106 @@ Form Maker is a project that allows users to create and manage forms using Form.
 
 ## Table of Contents
 
+- [Installation](#installation)
 - [Usage](#usage)
 - [File Structure](#file-structure)
 - [Customization](#customization)
 - [License](#license)
 
+## Installation
+
+To install the project, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/Nightshades24/form-maker.git
+```
+
+Or download the ZIP file from the repository and extract it to a folder on your machine.
+
 ## Usage
 
-To run the project, install the "Live Server" extension in Visual Studio Code and open the `index.html` file in the `form/` directory using the live server. You can do this by right-clicking on the `index.html` file and selecting "Open with Live Server" in the context menu in Visual Studio Code. 
+First make sure you have Node.js installed on your machine. You can download it from the official website: https://nodejs.org/.
 
-This will render the form defined in `form.js` using Form.io.
+To start the form, you can execute `start.bat` or run the following commands in the terminal:
 
-To convert the form to JSON format for the DMS, run the following command:
-
+```bash
+npm install
+npm run dev
 ```
-node convert_to_formio.js
-```
 
-This will generate a `custom_form.json` file containing the form definition in JSON format.
+This will install the required dependencies and start the project in development mode. The project will be available at `http://localhost:8080`.
+
+To convert the form to JSON format for the DMS, execute `convert_to_json.bat`. This will generate a `custom_form.json` file containing the form definition in JSON format.
 
 ## File Structure
 
 The project has the following structure:
 
 ```
-Form Maker/
+form-maker/
+├── conversion/
+│   └── convert_to_json.js
+|
 ├── form/
-│   ├── js/
-│   │   └── main.js
-│   ├── style.css
-│   ├── customcss.css
-│   ├── form.js
-|   ├── hook.js
-│   ├── index.html
-├── convert_to_formio.js
+│   ├── node_modules/
+│   ├── public/
+│   │   ├── js/
+│   │   |   ├── form.js
+│   │   |   └── main.js
+│   │   |
+│   │   ├── customcss.css
+│   │   ├── style.css
+│   │   ├── index.html
+│   |   ├── favicon.ico
+│   |   └── build.js
+|   |
+│   ├── app.js
+│   ├── package-lock.json
+│   └── package.json
+|
+├── .gitattributes
+├── .gitignore
+├── convert_to_json.bat
+├── start.bat
+├── custom_form.json
+├── variables.json
 └── README.md
 ```
 
-**The following files contain base functionality for the form and should not be edited:**
-- `form/style.css`: Contains the main CSS styles for the form. 
-- `form/index.html`: The main HTML file to render the form.
-- `convert_to_formio.js`: Script to convert the form definition to JSON format.
+The following files can be edited to customize the form:
+- `form/public/`: Contains the main files for the form and exposes them to the browser.
+- `form/public/customcss.css`: Contains custom CSS styles for the form.
+- `form/public/js/`: Contains JavaScript files for form functionality. Here you can add new JavaScript files.
+- `form/public/js/form.js`: Defines the form components and their properties.
+- `variables.json`: Contains variables such as "name" and "creator" used for defining the form in the DMS.
 
-**The following files can be edited to customize the form:**
-- `form/js/`: Contains JavaScript files for form functionality.
-- `form/js/main.js`: Is the entry point for the JavaScript functions and is the only file in included in the `index.html` file.
-- `form/customcss.css`: Contains custom CSS styles.
-- `form/form.js`: Defines the form components and their properties.
+**Note: Do not edit any other files unless you know what you are doing.**
 
 ## Customization
 
 ### Custom CSS
 
-You can add custom CSS styles in the `form/customcss.css` file. These styles will be applied to the form to enhance its appearance.
+You can add custom CSS styles in the `form/public/customcss.css` file. These styles will be applied to the form to enhance its appearance.
 
 ### Custom Form
 
-You can customize the form components and their properties in the `form/form.js` file. This file defines the form structure and properties using Form.io's JSON schema format.
+You can customize the form components and their properties in the `form/public/form.js` file. This file defines the form structure and properties using Form.io's JSON schema format. 
+**Do not add a newline at the end of the file!**
 
 ### Custom JavaScript
 
-You can add custom JavaScript functions in the `form/js/` directory. These functions can be used to add custom behavior to the form components. It should not be added to the `form.js` file, since it then will not be converted to JSON format.
+You can add custom JavaScript functions in the `form/public/js/` directory. These functions can be used to add custom behavior to the form components. It should not be added to the `form.js` file, since the JavaScript in this file will be ignored at conversion.
 
 ### Adding New JavaScript Files
-For every new JavaScript file you add, make sure to include it in the `MODULE_FILES` array in `form.js`:
+All files in `form/public/js/` are bundled together at conversion (except for `form.js`). You can add new JavaScript files to this directory and they will be included in the bundle.
+**Don't forget to add a single line to every new JavaScript file you add which exports all the functions in the file.**
 
 ```javascript
-const MODULE_FILES = [
-  'js/main.js',
-];
-```
-
-Don't forget to add a single line to every new JavaScript file you add which exports all the functions in the file.
-
-```javascript
-export { functionName1, functionName2, ... };
+export { 
+  functionName1, 
+  functionName2, 
+  ... 
+};
 ```
 
 ## License

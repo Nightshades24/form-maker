@@ -4,11 +4,20 @@ echo Starting the application...
 :: Go to /form directory
 cd form
 
-:: Start the local server in the browser
+:: Install the dependencies
+::npm install
+
+:: Start the application (runs in a separate command window)
+start cmd /k "npm install && npm run dev"
+
+:: Wait for server to start (adjust delay if necessary)
+timeout /t 5 /nobreak >nul
+
+:: Open the local server in the default browser
 start http://localhost:8080
 
-:: Start the application
-npm install
-npm run dev
-
+:: Return to the original directory
 cd ..
+
+echo Application started successfully!
+exit
