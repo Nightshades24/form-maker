@@ -11,9 +11,7 @@ async function loadAllModules() {
         try {
             const module = await import(file);
             for (const [key, value] of Object.entries(module)) {
-                if (typeof value === 'function') {
-                    window[key] = value; // Attach function to window
-                }
+                window[key] = value; // Attach module to window
             }
         } catch (error) {
             console.error(`Error loading module ${file}:`, error);
