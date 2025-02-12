@@ -4,10 +4,7 @@ echo Starting the application...
 :: Go to /form directory
 cd form
 
-:: Install the dependencies
-::npm install
-
-:: Start the application (runs in a separate command window)
+:: Install the dependencies and start the application (runs in a separate command window)
 start cmd /k "npm install && npm run dev"
 
 :: Wait for server to start (adjust delay if necessary)

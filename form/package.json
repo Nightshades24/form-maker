@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@formio/js": "^5.0.1",
-    "express": "^4.21.2"
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3"
   }
 }
