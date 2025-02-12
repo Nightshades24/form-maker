@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const formJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'custom_form.json'), 'utf8'));
-const form = JSON.parse(formJson.definition);
+const form = formJson.definition.formioFormDefinition ? formJson.definition : JSON.parse(formJson.definition);
 
 const components = form.formioFormDefinition.components;
 const customCss = form.customCss;
@@ -21,8 +21,8 @@ fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), 
 
 // Get all function names and objects from form/public/js/main.js
 const mainJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), 'utf8');
-const functionNames = mainJsContent.match(/function\s+(\w+)\s*\(/g).map(match => match.match(/function\s+(\w+)\s*\(/)[1]);
-const objectNames = mainJsContent.match(/const\s+(\w+)\s*=\s*{/g).map(match => match.match(/const\s+(\w+)\s*=\s*{/)[1]);
+const functionNames = mainJsContent.match(/function\s+(\w+)\s*\(/g) ? mainJsContent.match(/function\s+(\w+)\s*\(/g).map(match => match.match(/function\s+(\w+)\s*\(/)[1]) : [];
+const objectNames = mainJsContent.match(/const\s+(\w+)\s*=\s*{/g) ? mainJsContent.match(/const\s+(\w+)\s*=\s*{/g).map(match => match.match(/const\s+(\w+)\s*=\s*{/)[1]) : [];
 
 // Define the content of main.js to form/public/js/main.js and export the function names
 let mainJsExportContent = `${mainJsContent}`;
@@ -41,8 +41,10 @@ objectNames.forEach(objectName => {
 });
 
 // Get all variable names from main.js and export them
-const variableConst = mainJsExportContent.match(/^const\s+(\w+)\s*=\s*/gm).map(match => match.match(/^const\s+(\w+)\s*=\s*/)[1]);
-const variableLet = mainJsExportContent.match(/^let\s+(\w+)\s*=\s*/gm).map(match => match.match(/^let\s+(\w+)\s*=\s*/)[1]);
-mainJsExportContent = `${mainJsExportContent.trim()}\n\nexport {\n    ${functionNames.join(',\n    ')},\n    ${variableConst.join(',\n    ')},\n    ${variableLet.join(',\n    ')}\n};\n`;
+const variableConst = mainJsExportContent.match(/^const\s+(\w+)\s*=\s*/gm) ? mainJsExportContent.match(/^const\s+(\w+)\s*=\s*/gm).map(match => match.match(/^const\s+(\w+)\s*=\s*/)[1]) : [];
+const variableLet = mainJsExportContent.match(/^let\s+(\w+)\s*=\s*/gm) ? mainJsExportContent.match(/^let\s+(\w+)\s*=\s*/gm).map(match => match.match(/^let\s+(\w+)\s*=\s*/)[1]) : [];
+const exportJsExportContent = [functionNames.join(',\n    '), variableConst.join(',\n    '), variableLet.join(',\n    ')].filter(Boolean).join(',\n    ');
+
+mainJsExportContent = `${mainJsExportContent.trim()}\n\nexport {\n    ${exportJsExportContent}\n};\n`;
 
 fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), mainJsExportContent);
