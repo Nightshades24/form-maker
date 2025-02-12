@@ -1,6 +1,7 @@
 # Form Maker
 
-Form Maker is a project that allows users to create and manage forms using Form.io. This project includes custom CSS and JavaScript to enhance the functionality and appearance of the forms.
+Form Maker is a project that allows users to create and manage forms using Form.io. 
+This project includes custom CSS and JavaScript to enhance the functionality and appearance of the forms.
 
 ## Table of Contents
 
@@ -20,10 +21,32 @@ git clone https://github.com/Nightshades24/form-maker.git
 
 Or download the ZIP file from the repository and extract it to a folder on your machine.
 
+To run this project, make sure you have Node.js installed on your machine. You can download it from the official website: https://nodejs.org/.
+
 ## Usage
 
-First make sure you have Node.js installed on your machine. You can download it from the official website: https://nodejs.org/.
+Before you can use the project, you need to specify on which DMS you are going to work and a custom Bearer token for that DMS. 
+This token is used to authenticate the user and allow access to the DMS. 
+You can specify these values in the `variables.json` file. 
+The file should look like this:
 
+```json
+{
+    ...
+    "DMS": "https://example.doccomplete.com",
+    "BEARER": "abcEFG123"
+}
+```
+
+Replace the values with the correct DMS URL and Bearer token. 
+The DMS URL should be the base URL of the DMS, without any paths or query parameters. 
+The Bearer token should be a string of characters.
+To get the Bearer token, navigate to the DMS and log in. 
+Then open "Configuration" -> "Login options" and press on the fingerprint icon on the right.
+Here you can manage the Bearer tokens and create a new one.
+**Note that the Bearer token only works for the DMS it was created on.**
+
+Once you have specified the DMS and Bearer token, you can start the project.
 To start the form, you can execute `start.bat` or run the following commands in the terminal:
 
 ```bash
@@ -31,11 +54,14 @@ npm install
 npm run dev
 ```
 
-This will install the required dependencies and start the project in development mode. The project will be available at `http://localhost:8080`.
+This will install the required dependencies and start the project in development mode. 
+The project will be available at `http://localhost:8080`.
 
-To convert the form to JSON format for the DMS, execute `export.bat`. This will generate a `custom_form.json` file containing the form definition in JSON format.
+To convert the form to JSON format for the DMS, execute `export.bat`. 
+This will generate a `custom_form.json` file containing the form definition in JSON format.
 
-To convert a form downloaded from the DMS to the project format, make sure you named the form `custom_form.json` and then execute `import.bat`. This will generate the form in the project format.
+To convert a form downloaded from the DMS to the project format, make sure you named the form `custom_form.json` and then execute `import.bat`. 
+This will generate the form in the project format.
 
 ## File Structure
 
@@ -88,18 +114,22 @@ The following files can be edited to customize the form:
 
 ### Custom CSS
 
-You can add custom CSS styles in the `form/public/customcss.css` file. These styles will be applied to the form to enhance its appearance.
+You can add custom CSS styles in the `form/public/customcss.css` file. 
+These styles will be applied to the form to enhance its appearance.
 
 ### Custom Form
 
-You can customize the form components and their properties in the `form/public/form.js` file. This file defines the form structure and properties using Form.io's JSON schema format. 
+You can customize the form components and their properties in the `form/public/form.js` file. 
+This file defines the form structure and properties using Form.io's JSON schema format. <br>
 **Do not add a newline at the end of the file!**
 
 ### Custom JavaScript
 
-You can add custom JavaScript functions in the `form/public/js/` directory. These functions can be used to add custom behavior to the form components. It should not be added to the `form.js` file, since the JavaScript in this file will be ignored at conversion.
+You can add custom JavaScript functions in the `form/public/js/` directory. 
+These functions can be used to add custom behavior to the form components. 
+It should not be added to the `form.js` file, since the JavaScript in this file will be ignored at conversion.
 
-To declare a initializerFunction and get the form component and data object, you can use the following declarations:
+To declare a initializerFunction and get the form component and data object you can use the normal way of using the "dv-intialized" event, or you can use the following declarations:
 
 ```javascript
 let form;
