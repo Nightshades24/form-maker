@@ -1,4 +1,6 @@
 {
     "FORM_NAME": "Example name",
-    "USER": "10b32635-f427-4d7e-ac73-bc7aa4ed3055"
+    "USER": "10b32635-f427-4d7e-ac73-bc7aa4ed3055",
+    "DMS": "DEMO",
+    "BEARER": "!---Bearer token---!"
 }
