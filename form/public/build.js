@@ -40,7 +40,7 @@ window.onload = loadAllModules()
             else {
                 url = input;
             }
-            console.log("Intercepted request:", url.href, init);
+            console.debug("Intercepted request:", url.href, init);
         
             // Modify URL if it starts with "/" (relative path)
             if (typeof input === "string" && input.startsWith('/')) {
@@ -61,9 +61,11 @@ window.onload = loadAllModules()
             // Ensure headers object exists
             init.headers = new Headers(init.headers || {});
         
-            // Always set the Authorization header
-            init.headers.set('Authorization', `Bearer ${variables.BEARER}`);
-                
+            // Ensure Authorization header is correctly set with a Bearer token
+            if (!init.headers.has('Authorization') || init.headers.get('Authorization').trim() === "Bearer") {
+                init.headers.set('Authorization', `Bearer ${variables.BEARER}`);
+            }
+
             // Call the original fetch with the modified parameters
             return originalFetch(url.href, init);
         };
