@@ -32,7 +32,8 @@ The file should look like this:
 
 ```json
 {
-    ...
+    "FORM_NAME": "Example name",
+    "USER": "User key",
     "DMS": "https://example.doccomplete.com",
     "BEARER": "abcEFG123"
 }
@@ -45,6 +46,8 @@ To get the Bearer token, navigate to the DMS and log in.
 Then open "Configuration" -> "Login options" and press on the fingerprint icon on the right.
 Here you can manage the Bearer tokens and create a new one.
 **Note that the Bearer token only works for the DMS it was created on.**
+
+Here, you can also edit what the form name and last editor should be when you upload it to the DMS, but this is not necessary.
 
 Once you have specified the DMS and Bearer token, you can start the project.
 To start the form, you can execute `start.bat` or run the following commands in the terminal:
