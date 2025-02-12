@@ -81,7 +81,6 @@ app.get('/api/init', (req, res) => {
 
     const cleanedComponents = `[${components}]`
         .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
-        // .replace(/\\"/g, '"')               // Convert escaped quotes (\") to normal quotes (")
         .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
         .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
     

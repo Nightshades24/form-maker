@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Delete all property values from "components" that are empty strings or null
 const delKeys = [
     "id", 
     "idPath", 
@@ -32,6 +31,7 @@ const keepKeys = [
     "useWorker",
 ]
 
+// Delete all property values from "components" that are empty strings, null, or in "delKeys" with the exception of "keepKeys"
 const deleteEmptyProperties = (obj) => {
     for (const key in obj) {
         if (keepKeys.includes(key)) continue;
@@ -89,7 +89,7 @@ objectNames.forEach(objectName => {
     if (!/^[A-Z]/.test(objectName)) return;
     
     const objectContent = mainJsContent.match(new RegExp(`const\\s+${objectName}\\s*=\\s*\\{[\\s\\S]*?^};`, 'm'))[0];
-    const objectExportContent = `export ${objectContent}`; // \n\nexport default ${objectName};\n`;
+    const objectExportContent = `export ${objectContent}`;
     fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', `${objectName}.js`), objectExportContent);
 
     // Remove the object content from mainJsExportContent
