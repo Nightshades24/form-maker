@@ -11,13 +11,13 @@ const customJs = form.customJs;
 
 // Write the form components to form/public/form.js
 const formJsContent = `Formio.createForm(document.getElementById('dvf-form-viewer'), {\n    components: ${JSON.stringify(components, null, 4).replaceAll("\n", "\n    ")}\n});`;
-fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'form.js'), formJsContent);
+fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'form.js'), formJsContent.replaceAll("instance.root", "form"));
 
 // Write the custom css to form/public/customcss.css
 fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'customcss.css'), customCss);
 
 // Write the custom js to form/public/js/main.js
-fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), customJs);
+fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), customJs.replaceAll("instance.root", "form"));
 
 // Get all function names and objects from form/public/js/main.js
 const mainJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), 'utf8');
