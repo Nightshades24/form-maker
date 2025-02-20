@@ -6,12 +6,16 @@ const connectLivereload = require('connect-livereload');
 const cors = require("cors");
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
+// Port number
+const PORT = 8080;
+const RL_PORT = 2020;
+
 const app = express();
 
 // LiveReload setup
-const liveReloadServer = livereload.createServer();
+const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch(path.join(__dirname, 'public')); // Watch changes in /public
-app.use(connectLivereload()); // Enable LiveReload in Express
+app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
 app.use(cors());
 
 // Serve static files (HTML, CSS, JS)
@@ -115,14 +119,14 @@ app.get('/api/init', (req, res) => {
 });
 
 // Start the server
-const PORT = 8080;
 app.listen(PORT, () => {
-    console.info(` [server] server running at http://localhost:${PORT}`,);
+    console.info(` [server] form preview running at http://localhost:${PORT}`,);
     console.info(' [server] close this terminal or press Ctrl+C to quit.\n');
 });
 
 // Reload browser when files change
 liveReloadServer.server.once("connection", () => {
+    console.info(" refreshing form...");
     setTimeout(() => {
         liveReloadServer.refresh("/");
     }, 100);

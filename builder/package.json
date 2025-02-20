@@ -1,5 +1,5 @@
 {
-  "name": "form",
+  "name": "builder",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -17,8 +17,6 @@
   },
   "dependencies": {
     "@formio/js": "^5.0.1",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "http-proxy-middleware": "^3.0.3"
+    "express": "^4.21.2"
   }
 }
