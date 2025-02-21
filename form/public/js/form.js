@@ -46,15 +46,6 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
             "label": "Columns"
         },
         {
-            "label": "Text Field",
-            "applyMaskOn": "change",
-            "tableView": true,
-            "validateWhenHidden": false,
-            "key": "textField",
-            "type": "textfield",
-            "input": true
-        },
-        {
             "type": "button",
             "action": "custom",
             "custom": "example()",
@@ -62,6 +53,21 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
             "input": true,
             "key": "submit",
             "tableView": false
+        },
+        {
+            "label": "Upload",
+            "tableView": false,
+            "webcam": false,
+            "fileTypes": [
+                {
+                    "label": "",
+                    "value": ""
+                }
+            ],
+            "validateWhenHidden": false,
+            "key": "file",
+            "type": "file",
+            "input": true
         }
     ]
 });

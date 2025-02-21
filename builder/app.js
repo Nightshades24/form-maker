@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 // Port number
 const PORT = 3000;
@@ -38,6 +39,46 @@ app.post('/api/save', express.json(), (req, res) => {
 
     res.send('Form data saved successfully!');
 });
+
+// API to get the variables from variables.json
+app.get('/api/variables', (req, res) => {
+    const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8');
+    res.json(JSON.parse(variables));
+});
+
+app.use('/demo', createProxyMiddleware({
+    target: 'https://demo.doccomplete.nl',
+    changeOrigin: true,
+    pathRewrite: { '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
+    on: {
+        proxyReq: (proxyReq, req, res) => {
+            console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+        },
+        proxyRes: (proxyRes, req, res) => {
+            console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
+        },
+        error: (err, req, res) => {
+            console.error(`[PROXY ERROR] ${req.method} ${req.originalUrl} - ${err.message}`);
+        }
+    }
+}));
+
+app.use('/prod', createProxyMiddleware({
+    target: 'https://dms.blending.nl',
+    changeOrigin: true,
+    pathRewrite: { '^/prod': '' }, // Removes "/api" but keeps the rest of the URL
+    on: {
+        proxyReq: (proxyReq, req, res) => {
+            console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+        },
+        proxyRes: (proxyRes, req, res) => {
+            console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
+        },
+        error: (err, req, res) => {
+            console.error(`[PROXY ERROR] ${req.method} ${req.originalUrl} - ${err.message}`);
+        }
+    }
+}));
 
 // Start the server
 app.listen(PORT, () => {

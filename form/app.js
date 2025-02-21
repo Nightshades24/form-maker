@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
-const cors = require("cors");
 const { createProxyMiddleware } = require('http-proxy-middleware');
+// const cors = require("cors");
 
 // Port number
 const PORT = 8080;
@@ -16,7 +16,7 @@ const app = express();
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch(path.join(__dirname, 'public')); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
-app.use(cors());
+// app.use(cors());
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
