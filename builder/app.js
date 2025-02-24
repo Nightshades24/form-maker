@@ -26,8 +26,6 @@ app.get('/api/form', (req, res) => {
     // Remove first and last lines of the form.js file to get the JSON data
     formJson = formJson.substring(formJson.indexOf('['), formJson.lastIndexOf(']') + 1);
 
-    console.log(' [server] sending form data:', JSON.parse(formJson));
-
     res.json(JSON.parse(formJson));
 });
 

@@ -14,17 +14,18 @@ const app = express();
 
 // LiveReload setup
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
-liveReloadServer.watch(path.join(__dirname, 'public')); // Watch changes in /public
+liveReloadServer.watch([path.join(__dirname, 'public'), path.join(__dirname, '..', 'builder', 'public', 'components')]); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
 // app.use(cors());
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/components', express.static(path.join(__dirname, '..', 'builder', 'public', 'components')));
 
 app.use('/demo', createProxyMiddleware({
     target: 'https://demo.doccomplete.nl',
     changeOrigin: true,
-    pathRewrite: { '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
+    pathRewrite: {  '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);

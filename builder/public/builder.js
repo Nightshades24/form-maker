@@ -5,12 +5,15 @@ let builder;
 const originalFetch = window.fetch;
 
 // Load variables
-const variables = await originalFetch('/api/variables').then(response => response.json());
+const variables = await originalFetch('/api/variables').then(async response => {
+    const vars = await response.json();
+
+    window.variables = vars;
+    return vars;
+});
 
 // Intercept all fetch requests
 window.fetch = async (input, init = {}) => {
-    console.log('fetch', input, init);
-
     // Convert input to a URL object for easier handling
     let url;
     if (typeof input === "string") {
@@ -248,6 +251,9 @@ async function initializeBuilder() {
     });
 
     console.log(builder)
+    console.log(builder.schema)
+    //builder.editComponent(builder.schema.components[0], document.getElementById("e4e8oeo"), !1, !1) 
+    window.builder = builder;
 }
 
 // Fetch the form data

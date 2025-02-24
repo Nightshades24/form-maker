@@ -19,7 +19,8 @@ const jsContent = jsFiles.map(file => {
 
 // Get all components from the form/form.js file
 const formJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'form.js'), 'utf8');
-const components = formJsContent.split(/\r?\n/).slice(2, -2).join("\n");
+// const components = formJsContent.split(/\r?\n/).slice(2, -2).join("\n");
+const components = formJsContent.slice(formJsContent.indexOf('['), formJsContent.lastIndexOf(']') + 1);
 
 const cleanedComponents = `[${components}]`
     .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
