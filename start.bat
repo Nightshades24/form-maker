@@ -23,7 +23,7 @@ cd form
 start cmd /k "npm install && npm run dev"
 
 :: Wait for server to start (adjust delay if necessary)
-timeout /t 5 /nobreak >nul
+timeout /t 10 /nobreak >nul
 
 :: Open the form preview in the default browser
 start http://localhost:8080
