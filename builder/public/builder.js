@@ -3,6 +3,7 @@ let builder;
 
 // Save the original fetch function
 const originalFetch = window.fetch;
+window.originalFetch = originalFetch;
 
 // Load variables
 const variables = await originalFetch('/api/variables').then(async response => {
@@ -243,12 +244,14 @@ async function initializeBuilder() {
         }
     });
 
-    builder.on('updateComponent', async () => {
-        document.getElementById('save-form').disabled = !(await isFormModified());
-    });
-    builder.on('removeComponent', async () => {
-        document.getElementById('save-form').disabled = !(await isFormModified());
-    });
+    document.addEventListener("mousedown", function() {
+        setTimeout(async () => {
+            document.getElementById('save-form').disabled = !(await isFormModified());
+        }, 500);
+    });    
+
+    // Check if the form has been modified
+    document.getElementById('save-form').disabled = !(await isFormModified());
 }
 
 // Fetch the form data
@@ -281,8 +284,6 @@ async function saveForm() {
 }
 
 async function isFormModified() {
-    return true;
-
     if (!builder || !builder.schema) {
         console.error("Builder is not initialized yet!", builder);
         return;
@@ -292,9 +293,25 @@ async function isFormModified() {
     const form = builder.schema.components;
     const defaultComponents = await getLoadedForm();
 
-    // Check if the form has been modified by loo
+    // Check if the form has been modified by looping through all components and their properties and comparing them
+    for (let i = 0; i < form.length; i++) {
+        const component = form[i];
+        const defaultComponent = defaultComponents[i];
 
-    console.log('Form not modified');
+        if (!defaultComponent) {
+            console.debug(`Component ${component.key} not found in default components!`);
+            return true;
+        }
+
+        if (JSON.stringify(component) !== JSON.stringify(defaultComponent)) {
+            console.debug(`Form modified: ${component.key}`);
+            console.debug("Component:", component);
+            console.debug("Default component:", defaultComponent);
+            return true;
+        }
+    }
+
+    console.debug('Form not modified');
 
     return false;
 }

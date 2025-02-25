@@ -1,4 +1,6 @@
 class UserSelectComponent extends Formio.Components.components.select {
+    firstLoad = true;
+
     static schema() {
         return {
             "input": true,
@@ -1607,14 +1609,25 @@ class UserSelectComponent extends Formio.Components.components.select {
         }).then(async response => await response.json()) : { resources: [] };
 
         // Create links for all photo of users
-        const photoLinks = {};
-        await Promise.all(users.resources.map(async user => {
-            const response = await fetch(user.photos[0].value);
-            const blob = await response.blob();
-            const imageUrl = URL.createObjectURL(blob);
+        if (this.firstLoad) {
+            Promise.all(users.resources.map(async user => {
+                try {
+                    const response = await fetch(user.photos[0].value);
+                    const blob = await response.blob();
 
-            photoLinks[user.id] = imageUrl;
-        }));
+                    // Send the pictures to /api/pictures to store them
+                    const formData = new FormData();
+                    formData.append("id", user.id);
+                    formData.append("image", blob, `${user.id}.png`);
+
+                    await originalFetch('/api/picture', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                } catch (error) { } // Catch if not called by form builder
+            }));
+            this.firstLoad = false;
+        }
 
         let result;
 
@@ -1622,7 +1635,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             case 'identity':
                 //.resources[0].displayName
                 const u1 = users.resources.map(async user => ({
-                    label: `<img src="${photoLinks[user.id]}" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                     value: `identity:///identityprovider/scim/users/${user.id}`,
                 }));
 
@@ -1639,7 +1652,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             case 'id':
                 //.resources[0].id
                 const u2 = users.resources.map(user => ({
-                    label: `<img src="${photoLinks[user.id]}" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                     value: user.id,
                 }));
                 const g2 = groups.resources.map(group => ({
@@ -1655,7 +1668,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             case 'object':
                 //.resources[0]
                 const u3 = users.resources.map(user => ({
-                    label: `<img src="${photoLinks[user.id]}" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                     value: user,
                 }));
                 const g3 = groups.resources.map(group => ({

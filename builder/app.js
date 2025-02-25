@@ -4,6 +4,7 @@ const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const multer = require('multer');
 
 // Port number
 const PORT = 3000;
@@ -11,13 +12,49 @@ const RL_PORT = 1010;
 
 const app = express();
 
+// Configure multer for file uploads
+const upload = multer({ storage: multer.memoryStorage() });
+
 // LiveReload setup
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch(path.join(__dirname, 'public')); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
 
-// Serve static files (HTML, CSS, JS)
+// Serve static files (HTML, CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+
+// API to save a picture. The input is 
+// body: JSON.stringify({
+//     id: user.id,
+//     image: imageUrl, which is a blob URL
+// }),
+app.post('/api/picture', upload.single('image'), async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (!id || !req.file) {
+            return res.status(400).json({ error: 'Missing user ID or image file' });
+        }
+
+        // Define the file path
+        const filenameBuilder = path.join(__dirname, 'public', 'images', `${id}.svg`);
+        const filenameForm = path.join(__dirname, '..', 'form', 'public', 'images', `${id}.svg`);
+        
+        // Ensure the directory exists
+        fs.mkdirSync(path.dirname(filenameBuilder), { recursive: true });
+        fs.mkdirSync(path.dirname(filenameForm), { recursive: true });
+        
+        // Write the file to disk
+        fs.writeFileSync(filenameBuilder, req.file.buffer);
+        fs.writeFileSync(filenameForm, req.file.buffer);
+
+        res.json({ success: true, filePath: `/images/${id}.svg` });
+
+    } catch (error) {
+        console.error('Error saving picture:', error);
+        res.status(500).json({ error: 'Failed to save picture' });
+    }
+});
 
 // API to get the saved form data
 app.get('/api/form', (req, res) => {

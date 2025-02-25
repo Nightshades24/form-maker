@@ -7,12 +7,14 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
                     "width": 6,
                     "components": [
                         {
-                            "type": "textfield",
                             "label": "First Name",
-                            "key": "firstName",
-                            "input": true,
                             "placeholder": "Enter your first name",
-                            "tableView": true
+                            "applyMaskOn": "change",
+                            "tableView": true,
+                            "validateWhenHidden": false,
+                            "key": "firstName",
+                            "type": "textfield",
+                            "input": true
                         }
                     ],
                     "offset": 0,
@@ -73,10 +75,7 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
             "label": "User Select",
             "uniqueOptions": true,
             "tableView": true,
-            "defaultValue": {
-                "label": "<img src=\"blob:http://localhost:3000/08d81124-8dc7-4cfd-bde5-d9b9dc636cd6\" style=\"width:24px; margin-right:16px\">\nLars van Kleij",
-                "value": "10b32635-f427-4d7e-ac73-bc7aa4ed3055"
-            },
+            "defaultValue": "identity:///identityprovider/scim/users/10b32635-f427-4d7e-ac73-bc7aa4ed3055",
             "includeUsers": true,
             "includeGroups": true,
             "outputFormat": "identity",

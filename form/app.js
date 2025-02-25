@@ -18,9 +18,10 @@ liveReloadServer.watch([path.join(__dirname, 'public'), path.join(__dirname, '..
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
 // app.use(cors());
 
-// Serve static files (HTML, CSS, JS)
+// Serve static files (HTML, CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(path.join(__dirname, '..', 'builder', 'public', 'components')));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
 app.use('/demo', createProxyMiddleware({
     target: 'https://demo.doccomplete.nl',
