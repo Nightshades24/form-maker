@@ -249,11 +249,6 @@ async function initializeBuilder() {
     builder.on('removeComponent', async () => {
         document.getElementById('save-form').disabled = !(await isFormModified());
     });
-
-    console.log(builder)
-    console.log(builder.schema)
-    //builder.editComponent(builder.schema.components[0], document.getElementById("e4e8oeo"), !1, !1) 
-    window.builder = builder;
 }
 
 // Fetch the form data
