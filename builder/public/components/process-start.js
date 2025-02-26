@@ -1046,6 +1046,35 @@ class ProcessStartComponent extends Formio.Components.components.button {
             <button class="btn btn-primary">Start process</button>
         `);
     }
+
+    async onClick() {
+        const id = this.component.processId;
+        const businessKey = this.component.businessKey || "";
+        console.log(this)
+        await fetch(`/process/processes/test/instances`, {///${id}/instances`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: "{}",
+            body: JSON.stringify({
+                businessKey: businessKey,
+                variables: {}
+            })
+        }).then(async res => {
+            if (res.ok) {
+                console.log("startProcess event received", {
+                    "processId": id,
+                    "businessKey": businessKey
+                })
+            }
+            else {
+                const data = await res.text();
+
+                console.error(data);
+            }
+        })
+    }
 }
 
 // Register the component

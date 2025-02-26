@@ -4,7 +4,6 @@ const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-// const cors = require("cors");
 
 // Port number
 const PORT = 8080;
@@ -16,7 +15,9 @@ const app = express();
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch([path.join(__dirname, 'public'), path.join(__dirname, '..', 'builder', 'public', 'components')]); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
-// app.use(cors());
+
+app.use(express.json()); // For JSON payloads
+app.use(express.urlencoded({ extended: true })); // For form-encoded payloads
 
 // Serve static files (HTML, CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -47,6 +48,16 @@ app.use('/prod', createProxyMiddleware({
     on: {
         proxyReq: (proxyReq, req, res) => {
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+    
+            if (req.body) {
+                const bodyData = JSON.stringify(req.body);
+                console.log("Forwarding Body:", bodyData);
+    
+                // Write the body to the proxy request
+                proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+                proxyReq.setHeader('Content-Type', 'application/json');
+                proxyReq.write(bodyData);
+            }
         },
         proxyRes: (proxyRes, req, res) => {
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);

@@ -84,7 +84,7 @@ app.get('/api/variables', (req, res) => {
 app.use('/demo', createProxyMiddleware({
     target: 'https://demo.doccomplete.nl',
     changeOrigin: true,
-    pathRewrite: { '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
+    pathRewrite: { '^/demo': '' }, // Removes "/demo" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
@@ -101,7 +101,7 @@ app.use('/demo', createProxyMiddleware({
 app.use('/prod', createProxyMiddleware({
     target: 'https://dms.blending.nl',
     changeOrigin: true,
-    pathRewrite: { '^/prod': '' }, // Removes "/api" but keeps the rest of the URL
+    pathRewrite: { '^/prod': '' }, // Removes "/prod" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);

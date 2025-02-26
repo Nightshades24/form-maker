@@ -24,53 +24,70 @@ async function loadAllModules() {
     }
 }
 
+// Intercept all fetch requests
+window.fetch = async (input, init = {}) => {
+    // Convert input to a URL object for easier handling
+    let url;
+    if (typeof input === "string") {
+        url = new URL(input, window.location.origin);
+    }
+    else if (input instanceof Request) {
+        url = new URL(input.url);
+    }
+    else {
+        url = input;
+    }
+    console.debug("Intercepted request:", url.href, init);
+
+    // Modify URL if it starts with "/" (relative path)
+    if (typeof input === "string" && input.startsWith('/')) {
+        url = new URL(variables.DMS + input); // Prepend base API URL
+    }
+
+    if (url.hostname === "demo.doccomplete.nl") {
+        url = new URL(window.location.href + "demo" + url.pathname);
+    }
+    else if (url.hostname === "dms.blending.nl") {
+        url = new URL(window.location.href + "prod" + url.pathname);
+    }
+    else {
+        // Do nothing
+        return originalFetch(input, init);
+    }
+
+    // Ensure headers object exists
+    init.headers = new Headers(init.headers || {});
+
+    // Ensure Authorization header is correctly set with a Bearer token
+    if (!init.headers.has('Authorization') || init.headers.get('Authorization').trim() === "Bearer") {
+        init.headers.set('Authorization', `Bearer ${variables.BEARER}`);
+    }
+
+    // Call the original fetch with the modified parameters
+    return originalFetch(url.href, init);
+};
+
 // Load modules when the page loads and then load the init actions
 window.onload = loadAllModules()
-    .then(() => {
-        // Intercept all fetch requests
-        window.fetch = async (input, init = {}) => {
-            // Convert input to a URL object for easier handling
-            let url;
-            if (typeof input === "string") {
-                url = new URL(input, window.location.origin);
-            }
-            else if (input instanceof Request) {
-                url = new URL(input.url);
-            }
-            else {
-                url = input;
-            }
-            console.debug("Intercepted request:", url.href, init);
-        
-            // Modify URL if it starts with "/" (relative path)
-            if (typeof input === "string" && input.startsWith('/')) {
-                url = new URL(variables.DMS + input); // Prepend base API URL
-            }
+    .then(() => loadInitActions())
+    .then(() => setTimeout(disableTaskBtns, 1000));
 
-            if (url.hostname === "demo.doccomplete.nl") {
-                url = new URL(window.location.href + "demo" + url.pathname);
-            }
-            else if (url.hostname === "dms.blending.nl") {
-                url = new URL(window.location.href + "prod" + url.pathname);
-            }
-            else {
-                // Do nothing
-                return originalFetch(input, init);
-            }
-        
-            // Ensure headers object exists
-            init.headers = new Headers(init.headers || {});
-        
-            // Ensure Authorization header is correctly set with a Bearer token
-            if (!init.headers.has('Authorization') || init.headers.get('Authorization').trim() === "Bearer") {
-                init.headers.set('Authorization', `Bearer ${variables.BEARER}`);
-            }
+window.onchange = disableTaskBtns();
 
-            // Call the original fetch with the modified parameters
-            return originalFetch(url.href, init);
-        };
-    })
-    .then(() => { loadInitActions(); });
+function disableTaskBtns() {
+    // Select all elements with the given class
+    const buttons = document.querySelectorAll(".formio-component-taskCompletionBtn");
+
+    // Loop through each element and set properties
+    buttons.forEach(comp => {
+        const button = comp.component.refs.button;
+
+        button.disabled = true; // Disable the button
+        button.title = "Not available in Formio preview, only in DMS."; // Set the tooltip
+        button.setAttribute("style", "cursor: not-allowed;"); // Change the cursor
+        button.setAttribute("style", "background-color:#747474 !important;" + "border-color: #d0d0d0;") // Grey out the button
+    });
+}
 
 async function loadInitActions() {
     let form = window.Formio.forms[document.getElementsByClassName("formio-component-form")[0].id];

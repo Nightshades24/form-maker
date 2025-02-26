@@ -13,6 +13,8 @@ const variables = await originalFetch('/api/variables').then(async response => {
     return vars;
 });
 
+const old = variables.DMS == "https://demo.doccomplete.nl";
+
 // Intercept all fetch requests
 window.fetch = async (input, init = {}) => {
     // Convert input to a URL object for easier handling
@@ -64,194 +66,205 @@ async function initializeBuilder() {
         components: form
     };
 
+    const componentOrder = [
+        "hidden",
+        "container",
+        "datamap",
+        "datagrid",
+        "editgrid",
+        "tree",
+    ];
+
+    const components = {
+        tree: {
+            title: 'Tree',
+            group: 'data',
+            icon: 'indent',
+            key: 'tree',
+            weight: 100,
+            schema: {
+                "label": "Tree",
+                "labelPosition": "top",
+                "placeholder": "",
+                "description": "",
+                "tooltip": "",
+                "customClass": "",
+                "tabindex": "",
+                "hidden": false,
+                "hideLabel": false,
+                "autofocus": false,
+                "dataGridLabel": false,
+                "disabled": false,
+                "tableView": false,
+                "modalEdit": false,
+                "protected": false,
+                "dbIndex": false,
+                "redrawOn": "",
+                "clearOnHide": false,
+                "customDefaultValue": "",
+                "calculateValue": "",
+                "allowCalculateOverride": false,
+                "validate": {
+                    "required": false,
+                    "customMessage": "",
+                    "custom": "",
+                    "customPrivate": false,
+                    "json": "",
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                },
+                "validateOn": "change",
+                "errorLabel": "",
+                "key": "tree",
+                "properties": {},
+                "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": "",
+                    "json": ""
+                },
+                "attributes": {},
+                "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                },
+                "type": "tree",
+                "input": true,
+                "prefix": "",
+                "suffix": "",
+                "multiple": false,
+                "unique": false,
+                "persistent": true,
+                "refreshOn": "",
+                "calculateServer": false,
+                "widget": null,
+                "encrypted": false,
+                "showCharCount": false,
+                "showWordCount": false,
+                "allowMultipleMasks": false,
+                "addons": [],
+                "tree": true,
+                "components": [],
+                "defaultValue": null
+            }
+        },
+    };
+
+    if (!old) {
+        componentOrder.push("file");
+        components.file = {
+            documentation: "/userguide/form-building/premium-components#file",
+            title: 'File',
+            group: 'data',
+            icon: 'file',
+            key: 'file',
+            weight: 100,
+            schema: {
+                "input": true,
+                "key": "file",
+                "placeholder": "",
+                "prefix": "",
+                "customClass": "",
+                "suffix": "",
+                "multiple": false,
+                "defaultValue": null,
+                "protected": false,
+                "unique": false,
+                "persistent": true,
+                "hidden": false,
+                "clearOnHide": true,
+                "refreshOn": "",
+                "redrawOn": "",
+                "tableView": false,
+                "modalEdit": false,
+                "label": "Upload",
+                "dataGridLabel": false,
+                "labelPosition": "top",
+                "description": "",
+                "errorLabel": "",
+                "tooltip": "",
+                "hideLabel": false,
+                "tabindex": "",
+                "disabled": false,
+                "autofocus": false,
+                "dbIndex": false,
+                "customDefaultValue": "",
+                "calculateValue": "",
+                "calculateServer": false,
+                "widget": null,
+                "attributes": {},
+                "validateOn": "change",
+                "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                },
+                "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                },
+                "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                },
+                "allowCalculateOverride": false,
+                "encrypted": false,
+                "showCharCount": false,
+                "showWordCount": false,
+                "properties": {},
+                "allowMultipleMasks": false,
+                "addons": [],
+                "type": "file",
+                "image": false,
+                "privateDownload": false,
+                "imageSize": "200",
+                "filePattern": "*",
+                "fileMinSize": "0KB",
+                "fileMaxSize": "1GB",
+                "uploadOnly": false
+            }
+        };
+    }
+
     // Assign builder to the global variable
     builder = await new Formio.builder(document.getElementById('dvf-form-builder'), defaultForm, {
         builder: {
-            premium: false,
+            premium: old ? { title: 'Premium', weight: 40 } : false,
             data: {
-                componentOrder: [
-                    "hidden",
-                    "container",
-                    "datamap",
-                    "datagrid",
-                    "editgrid",
-                    "tree",
-                    "file",
-                  ],
-                components: {
-                    tree: {
-                        title: 'Tree',
-                        group: 'data',
-                        icon: 'indent',
-                        key: 'tree',
-                        weight: 100,
-                        schema: {
-                            "label": "Tree",
-                            "labelPosition": "top",
-                            "placeholder": "",
-                            "description": "",
-                            "tooltip": "",
-                            "customClass": "",
-                            "tabindex": "",
-                            "hidden": false,
-                            "hideLabel": false,
-                            "autofocus": false,
-                            "dataGridLabel": false,
-                            "disabled": false,
-                            "tableView": false,
-                            "modalEdit": false,
-                            "protected": false,
-                            "dbIndex": false,
-                            "redrawOn": "",
-                            "clearOnHide": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "allowCalculateOverride": false,
-                            "validate": {
-                              "required": false,
-                              "customMessage": "",
-                              "custom": "",
-                              "customPrivate": false,
-                              "json": "",
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "validateOn": "change",
-                            "errorLabel": "",
-                            "key": "tree",
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "tree",
-                            "input": true,
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "unique": false,
-                            "persistent": true,
-                            "refreshOn": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "tree": true,
-                            "components": [],
-                            "defaultValue": null
-                        }
-                    },
-                    file: {
-                        documentation: "/userguide/form-building/premium-components#file",
-                        title: 'File',
-                        group: 'data',
-                        icon: 'file',
-                        key: 'file',
-                        weight: 100,
-                        schema: {
-                            "input": true,
-                            "key": "file",
-                            "placeholder": "",
-                            "prefix": "",
-                            "customClass": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "tableView": false,
-                            "modalEdit": false,
-                            "label": "Upload",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "attributes": {},
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": ""
-                            },
-                            "overlay": {
-                              "style": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "properties": {},
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "type": "file",
-                            "image": false,
-                            "privateDownload": false,
-                            "imageSize": "200",
-                            "filePattern": "*",
-                            "fileMinSize": "0KB",
-                            "fileMaxSize": "1GB",
-                            "uploadOnly": false
-                        }
-                    }
-                }
+                componentOrder: componentOrder,
+                components: components,
             },
-            dvelop: {
+            dvelop: old ? false : {
                 title: 'd.velop platform',
                 weight: 50,
             }
         }
     });
 
-    document.addEventListener("mousedown", function() {
+    document.addEventListener("mousedown", function () {
         setTimeout(async () => {
             document.getElementById('save-form').disabled = !(await isFormModified());
         }, 500);
-    });    
+    });
 
     // Check if the form has been modified
     document.getElementById('save-form').disabled = !(await isFormModified());
+
+    window.builder = builder;
+
+    console.log("Builder initialized");
 }
 
 // Fetch the form data
@@ -266,7 +279,7 @@ async function saveForm() {
         console.error("Builder is not initialized yet!");
         return;
     }
-    
+
     await originalFetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -317,7 +330,7 @@ async function isFormModified() {
 }
 
 // Initialize builder when the page loads
-setTimeout(() => initializeBuilder(), 100);
+setTimeout(async () => await initializeBuilder(), 100);
 
 // Attach event listeners
 document.getElementById('save-form').addEventListener('click', saveForm);

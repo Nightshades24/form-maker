@@ -103,6 +103,16 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
             "clearOnHide": false,
             "action": "event",
             "event": "taskCompletion"
+        },
+        {
+            "label": "Start process",
+            "processId": "test",
+            "tableView": false,
+            "key": "procStartBtn",
+            "type": "procStartBtn",
+            "input": true,
+            "clearOnHide": false,
+            "action": "custom"
         }
     ]
 });
