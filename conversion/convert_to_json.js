@@ -22,7 +22,7 @@ const formJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public
 // const components = formJsContent.split(/\r?\n/).slice(2, -2).join("\n");
 const components = formJsContent.slice(formJsContent.indexOf('['), formJsContent.lastIndexOf(']') + 1);
 
-const cleanedComponents = `[${components}]`
+const cleanedComponents = `${components}`
     .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
     .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
     .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
@@ -65,12 +65,25 @@ function generateGUID() {
     });
 }
 
+const id = generateGUID();
+
 fs.writeFileSync(path.join(__dirname, '..', 'custom_form.json'), JSON.stringify({
-    "id": generateGUID(),
+    "id": id,
     "name": FORM_NAME,
     "author": USER,
-    "creationDate": getFormattedDateTime(),
     "lastEditor": USER,
+    "creationDate": getFormattedDateTime(),
     "lastModificationDate": getFormattedDateTime(),
-    "definition": definition,
-}));
+    "definition": JSON.stringify(definition),
+    "_links": {
+        "edit": {
+            "href": `/dforms/ui/forms/${id}/edit`
+        },
+        "self": {
+            "href": `/dforms/api/forms/${id}`
+        },
+        "view": {
+            "href": `/dforms/ui/forms/${id}/view`
+        }
+    }
+}, null, 4));
