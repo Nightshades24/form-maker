@@ -16,9 +16,13 @@ echo Operation cancelled.
 goto end
 
 :yes
+:: Ask for the name variable
+echo How would you like to name the form?
+set /p name=Enter the name: 
+
 echo Converting form to JSON format...
 
-node conversion/convert_to_json.js
+node conversion/convert_to_json.js %name%
 
 echo Conversion complete. 'custom_form.json' has been overwritten.
 

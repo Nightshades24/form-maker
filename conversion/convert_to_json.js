@@ -2,9 +2,11 @@
 const fs = require('fs');
 const path = require('path');
 
+const FORM_NAME = process.argv[2];
+
 // Get form name from variable FORM_NAME from variables.json which is 1 level up
 const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8');
-const { FORM_NAME, USER } = JSON.parse(variables);
+const { USER } = JSON.parse(variables);
 
 // Get the form/customcss.css file content as a string
 const customCss = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'customcss.css'), 'utf8');
