@@ -4,7 +4,18 @@
 ///////////////////////////////////////////////////////////////////////////
 
 // Save the original fetch function
-const originalFetch = window.fetch;
+const ogFetch = window.fetch;
+
+// Save the original fetch function
+const originalFetch = async (input, init = {}) => {
+    // Prepend the route with the path
+    if (typeof input === "string" && input.startsWith('/api')) {
+        input = window.location.pathname + input.slice(1);
+    } 
+
+    return ogFetch(input, init);
+} ;
+window.originalFetch = originalFetch;
 
 // Load all modules, variables, and custom actions
 const variables = await originalFetch('/api/variables').then(response => response.json());
@@ -14,7 +25,8 @@ const customActions = await originalFetch('/api/init').then(response => response
 async function loadAllModules() {
     for (const file of moduleFiles) {
         try {
-            const module = await import(file);
+            const path = window.location.pathname;
+            const module = await import(`${path.slice(0, path.length-1)}${file}`);
             for (const [key, value] of Object.entries(module)) {
                 window[key] = value; // Attach module to window
             }

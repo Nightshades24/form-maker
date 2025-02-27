@@ -6,8 +6,8 @@ const ogFetch = window.fetch;
 // Save the original fetch function
 const originalFetch = async (input, init = {}) => {
     // Prepend the route with the path
-    if (typeof input === "string" && input.startsWith('/api')) {
-        input = window.location.pathname + input.slice(1);
+    if (typeof input === "string" && input.startsWith('/')) {
+        input = window.location.pathname + input;
     } 
 
     return ogFetch(input, init);

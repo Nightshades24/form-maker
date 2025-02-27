@@ -1610,7 +1610,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             }).then(async response => await response.json()) : { resources: [] };
 
             // Create links for all photo of users
-            if (this.firstLoad) {
+            if (this.firstLoad && window.location.pathname == "/builder") {
                 Promise.all(users.resources.map(async user => {
                     try {
                         const response = await fetch(user.photos[0].value);
@@ -1636,7 +1636,7 @@ class UserSelectComponent extends Formio.Components.components.select {
                 case 'identity':
                     //.resources[0].displayName
                     const u1 = users.resources.map(async user => ({
-                        label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                        label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                         value: `identity:///identityprovider/scim/users/${user.id}`,
                     }));
 
@@ -1653,7 +1653,7 @@ class UserSelectComponent extends Formio.Components.components.select {
                 case 'id':
                     //.resources[0].id
                     const u2 = users.resources.map(user => ({
-                        label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                        label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                         value: user.id,
                     }));
                     const g2 = groups.resources.map(group => ({
@@ -1669,7 +1669,7 @@ class UserSelectComponent extends Formio.Components.components.select {
                 case 'object':
                     //.resources[0]
                     const u3 = users.resources.map(user => ({
-                        label: `<img src="/images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                        label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                         value: user,
                     }));
                     const g3 = groups.resources.map(group => ({
