@@ -3,7 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
+
+// Enable extensive logging in the proxy
+const extensiveLogging = false;
 
 // Port number
 const PORT = 8080;
@@ -16,8 +19,7 @@ const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch([path.join(__dirname, 'public'), path.join(__dirname, '..', 'builder', 'public', 'components')]); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
 
-app.use(express.json()); // For JSON payloads
-app.use(express.urlencoded({ extended: true })); // For form-encoded payloads
+app.use(express.raw({ type: 'application/json' })); // For raw payloads
 
 // Serve static files (HTML, CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,9 +32,30 @@ app.use('/demo', createProxyMiddleware({
     pathRewrite: {  '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
+            proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
+            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+            
+            if (extensiveLogging) {
+                console.log("Method:", proxyReq.method);
+                console.log("Content-Length:", proxyReq.getHeader('Content-Length'));
+                console.log("Content-Type:", proxyReq.getHeader('Content-Type'));
+                console.log("Origin:", proxyReq.getHeader('Origin'));
+                console.log("Referer:", proxyReq.getHeader('Referer'));
+                console.log("User-Agent:", proxyReq.getHeader('User-Agent'));
+                console.log("Host:", proxyReq.getHeader('Host'));
+            }
+    
+            if (req.body && Object.keys(req.body).length > 0) {
+                fixRequestBody(proxyReq, req)
+            }
         },
         proxyRes: (proxyRes, req, res) => {
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {
@@ -47,19 +70,30 @@ app.use('/prod', createProxyMiddleware({
     pathRewrite: { '^/prod': '' }, // Removes "/api" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
+            proxyReq.setHeader('Origin', "https://dms.blending.nl");
+            proxyReq.setHeader('Referer', "https://dms.blending.nl/");
+            
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+            
+            if (extensiveLogging) {
+                console.log("Method:", proxyReq.method);
+                console.log("Content-Length:", proxyReq.getHeader('Content-Length'));
+                console.log("Content-Type:", proxyReq.getHeader('Content-Type'));
+                console.log("Origin:", proxyReq.getHeader('Origin'));
+                console.log("Referer:", proxyReq.getHeader('Referer'));
+                console.log("User-Agent:", proxyReq.getHeader('User-Agent'));
+                console.log("Host:", proxyReq.getHeader('Host'));
+            }
     
-            if (req.body) {
-                const bodyData = JSON.stringify(req.body);
-                console.log("Forwarding Body:", bodyData);
-    
-                // Write the body to the proxy request
-                proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-                proxyReq.setHeader('Content-Type', 'application/json');
-                proxyReq.write(bodyData);
+            if (req.body && Object.keys(req.body).length > 0) {
+                fixRequestBody(proxyReq, req)
             }
         },
         proxyRes: (proxyRes, req, res) => {
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {

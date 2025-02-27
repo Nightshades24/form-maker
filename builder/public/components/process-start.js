@@ -1050,13 +1050,12 @@ class ProcessStartComponent extends Formio.Components.components.button {
     async onClick() {
         const id = this.component.processId;
         const businessKey = this.component.businessKey || "";
-        console.log(this)
-        await fetch(`/process/processes/test/instances`, {///${id}/instances`, {
+
+        await fetch(`https://dms.blending.nl/process/processes/${id}/instances`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: "{}",
             body: JSON.stringify({
                 businessKey: businessKey,
                 variables: {}

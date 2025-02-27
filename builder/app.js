@@ -87,9 +87,16 @@ app.use('/demo', createProxyMiddleware({
     pathRewrite: { '^/demo': '' }, // Removes "/demo" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
+            proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
+            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         },
         proxyRes: (proxyRes, req, res) => {
+            if (req.path.includes("identityprovider")) return;
+
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {
@@ -104,9 +111,16 @@ app.use('/prod', createProxyMiddleware({
     pathRewrite: { '^/prod': '' }, // Removes "/prod" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
+            proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
+            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         },
         proxyRes: (proxyRes, req, res) => {
+            if (req.path.includes("identityprovider")) return;
+            
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {
