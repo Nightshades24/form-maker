@@ -2,66 +2,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const delKeys = [
-    "id", 
-    "idPath", 
-    "size", 
-    "offset", 
-    "push", 
-    "pull", 
-    "currentWidth",
-    "clearOnHide",
-    "validateOn",
-    "limit",
-    "dataSrc",
-    "lazyLoad",
-    "searchDebounce",
-    "minSearch",
-    "template",
-    "selectThreshold",
-    "fuseOptions",
-    "persistent",
-]
-
-const keepKeys = [
-    "highlightActiveLine",
-    "highlightSelectedWord",
-    "highlightGutterLine",
-    "showPrintMargin",
-    "useWorker",
-]
-
-// Delete all property values from "components" that are empty strings, null, or in "delKeys" with the exception of "keepKeys"
-const deleteEmptyProperties = (obj) => {
-    for (const key in obj) {
-        if (keepKeys.includes(key)) continue;
-        if (
-            delKeys.includes(key) || 
-            obj[key] === "" || 
-            obj[key] === null || 
-            obj[key] === false || 
-            (Array.isArray(obj[key]) && obj[key].length === 1 && JSON.stringify(obj[key][0]) === '{}')
-        ){
-            delete obj[key];
-        } 
-        else if (typeof obj[key] === 'object') {
-            if (Object.keys(obj[key]).length === 0) {
-                delete obj[key];
-            } 
-            else{
-                deleteEmptyProperties(obj[key]);
-            }
-        }
-    }
-
-    return obj;
-};
-
 const formJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'custom_form.json'), 'utf8'));
 const form = formJson.definition.formioFormDefinition ? formJson.definition : JSON.parse(formJson.definition);
 
-const components = deleteEmptyProperties(deleteEmptyProperties(form.formioFormDefinition.components));
-// const components = form.formioFormDefinition.components;
+const components = form.formioFormDefinition.components;
 const customCss = form.customCss;
 const customJs = form.customJs;
 

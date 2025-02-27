@@ -19,10 +19,9 @@ const jsContent = jsFiles.map(file => {
 
 // Get all components from the form/form.js file
 const formJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'form.js'), 'utf8');
-// const components = formJsContent.split(/\r?\n/).slice(2, -2).join("\n");
 const components = formJsContent.slice(formJsContent.indexOf('['), formJsContent.lastIndexOf(']') + 1);
 
-const cleanedComponents = `${components}`
+const cleanedComponents = components
     .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
     .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
     .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
