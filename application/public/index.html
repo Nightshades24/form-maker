@@ -408,7 +408,7 @@
             }
 
             // Check if a name is entered
-            const nameEntered = formName.value.trim().length > 0;
+            const nameEntered = formName.value.trim().length > 0 && !formName.value.includes('\"') && !formName.value.includes('\'');
 
             // If 'export' is selected, require author; if 'import', skip
             const authorChosen = selectedMode === 'export'
