@@ -61,6 +61,18 @@ app.post('/api/form', express.json(), (req, res) => {
     });
 });
 
+// API to get the variables from variables.json
+app.get('/api/variables', (req, res) => {
+    const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8');
+    res.json(JSON.parse(variables));
+});
+
+// API to update the variables in variables.json
+app.put('/api/variables', express.json(), (req, res) => {
+    const variables = req.body;
+    fs.writeFileSync(path.join(__dirname, '..', 'variables.json'), JSON.stringify(variables, null, 4));
+    res.send('Variables updated successfully');
+});
 
 // Start the server
 app.listen(PORT, () => {
