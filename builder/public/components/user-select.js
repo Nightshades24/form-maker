@@ -1610,7 +1610,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             }).then(async response => await response.json()) : { resources: [] };
 
             // Create links for all photo of users
-            if (this.firstLoad && window.location.pathname == "/builder") {
+            if (this.firstLoad && window.location.pathname == "/builder/") {
                 Promise.all(users.resources.map(async user => {
                     try {
                         const response = await fetch(user.photos[0].value);
@@ -1619,6 +1619,7 @@ class UserSelectComponent extends Formio.Components.components.select {
                         // Send the pictures to /api/pictures to store them
                         const formData = new FormData();
                         formData.append("id", user.id);
+                        formData.append("displayName", user.displayName);
                         formData.append("image", blob, `${user.id}.png`);
 
                         await originalFetch('/api/picture', {
@@ -1636,7 +1637,7 @@ class UserSelectComponent extends Formio.Components.components.select {
                 case 'identity':
                     //.resources[0].displayName
                     const u1 = users.resources.map(async user => ({
-                        label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                        label: `<img src="${window.location.pathname}images/${user.displayName}_${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
                         value: `identity:///identityprovider/scim/users/${user.id}`,
                     }));
 

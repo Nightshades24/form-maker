@@ -25,24 +25,21 @@ router.use('/images', express.static(path.join(__dirname, '..', 'builder', 'publ
 // API to save a picture
 router.post('/api/picture', upload.single('image'), async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id, displayName } = req.body;
         if (!id || !req.file) {
             return res.status(400).json({ error: 'Missing user ID or image file' });
         }
 
         // Define file paths
-        const filenameBuilder = path.join(__dirname, 'public', 'images', `${id}.svg`);
-        const filenameForm = path.join(__dirname, '..', 'form', 'public', 'images', `${id}.svg`);
+        const filename = path.join(__dirname, 'public', 'images', `${displayName}_${id}.svg`);
         
         // Ensure directories exist
-        fs.mkdirSync(path.dirname(filenameBuilder), { recursive: true });
-        fs.mkdirSync(path.dirname(filenameForm), { recursive: true });
+        fs.mkdirSync(path.dirname(filename), { recursive: true });
         
         // Write the image file to both locations
-        fs.writeFileSync(filenameBuilder, req.file.buffer);
-        fs.writeFileSync(filenameForm, req.file.buffer);
+        fs.writeFileSync(filename, req.file.buffer);
 
-        res.json({ success: true, filePath: `/images/${id}.svg` });
+        res.json({ success: true, filePath: `/images/${displayName}_${id}.svg` });
     } catch (error) {
         console.error('Error saving picture:', error);
         res.status(500).json({ error: 'Failed to save picture' });

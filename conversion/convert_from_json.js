@@ -2,7 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const formJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'custom_form.json'), 'utf8'));
+const FORM_NAME = process.argv[2];
+
+const formJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', `${FORM_NAME}.json`), 'utf8'));
 const form = formJson.definition.formioFormDefinition ? formJson.definition : JSON.parse(formJson.definition);
 
 const components = form.formioFormDefinition.components;

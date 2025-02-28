@@ -1,153 +1,372 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>Homepage</title>
-  <link rel="icon" href="/favicon.ico">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Optional Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Roboto', Arial, sans-serif;
-      background-color: #fff;
-      overflow: hidden; /* Hide any horizontal scrollbars */
-    }
+    <meta charset="utf-8">
+    <title>Homepage</title>
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Optional Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #fff;
+            overflow: hidden;
+            /* Hide any horizontal scrollbars */
+        }
 
-    /* Wrap everything so we can hide overflow during slide */
-    .outer-wrapper {
-      width: 100%;
-      height: 100vh;
-      position: relative;
-    }
+        /* Wrap everything so we can hide overflow during slide */
+        .outer-wrapper {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
 
-    /* Container for the three buttons */
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 180px;           /* Spacing between squares */
-      height: 100vh;        /* Full-height container */
-      transition: transform 0.6s ease; /* Smooth slide animation */
-    }
+        /* Container for the three buttons */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 180px;
+            /* Spacing between squares */
+            height: calc(100vh - 320px);
+            /* Full-height container minus some space for title */
+            transition: transform 0.6s ease;
+            /* Smooth slide animation */
+        }
 
-    /* Shift container to the left when .slide-left is applied */
-    .container.slide-left {
-      /* 
-         2 button widths (2×200=400) + 2 gaps (2×180=360) = 760.
-         Adjust if you change button sizes or spacing.
-      */
-      transform: translateX(-760px);
-    }
+        /* Shift container to the left when .slide-left is applied */
+        .container.slide-left {
+            transform: translateX(-760px);
+        }
 
-    /* Each square "button" */
-    .button-card {
-      width: 200px;
-      height: 200px;
-      background-color: #1f89c3; /* Primary color */
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-      font-size: 1.3em;
-      font-weight: 600;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer; /* Make it clear these are clickable */
-    }
-    .button-card:hover {
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 5px 110px #5ba6ce;
-    }
-    .button-card:active {
-      transform: scale(0.98);
-    }
-    .button-card.selected {
-      box-shadow: 0 5px 110px #5ba6ce;
-    }
+        /* Shift buttons out the screen when .slide-out is applied */
+        .button-card.slide-out {
+            transform: translateX(-300%);
+        }
 
-    /* SELECTION PANEL */
-    .selection-panel {
-      position: absolute;
-      top: 50%;
-      right: -400px; /* Start off-screen to the right */
-      transform: translateY(-50%);
-      width: 300px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: right 0.6s ease, opacity 0.6s ease;
-      opacity: 0;
-    }
-    /* When shown, slide in from the right */
-    .selection-panel.show {
-      right: 50px;
-      opacity: 1;
-    }
+        /* Each square "button" */
+        .button-card {
+            width: 200px;
+            height: 200px;
+            background-color: #1f89c3;
+            /* Primary color */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.3em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            /* Make it clear these are clickable */
+        }
 
-    /* Example styling for the panel content */
-    .selection-panel h2 {
-      margin-bottom: 20px;
-      font-size: 1.8em;
-      color: #1f89c3;
-    }
-    .selection-panel p {
-      margin: 10px 0;
-    }
-  </style>
+        .button-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 110px #5ba6ce;
+        }
+
+        .button-card:active {
+            transform: scale(0.98);
+        }
+
+        .button-card.selected {
+            box-shadow: 0 5px 110px #5ba6ce;
+        }
+
+        /* SELECTION PANEL */
+        .selection-panel {
+            position: absolute;
+            top: calc(50% - 70px);
+            right: -400px;
+            /* Start off-screen to the right */
+            transform: translateY(-50%);
+            width: 320px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: right 0.6s ease, opacity 0.6s ease;
+            opacity: 0;
+        }
+
+        /* When shown, slide in from the right */
+        .selection-panel.show {
+            right: 25%;
+            opacity: 1;
+        }
+
+        /* Example styling for the panel content */
+        .selection-panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #1f89c3;
+        }
+
+        /* Radio group styling */
+        .radio-group {
+            margin-bottom: 10px;
+        }
+
+        .radio-group label {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        /* Inputs, select, etc. */
+        .selection-panel input[type="text"],
+        .selection-panel select {
+            width: 80%;
+            margin: 10px 0;
+            padding: 8px;
+            border: 2px solid #1f89c3;
+            border-radius: 4px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .selection-panel input[type="text"]:focus,
+        .selection-panel select:focus {
+            border-color: #5ba6ce;
+        }
+
+        /* Save button */
+        .selection-panel button {
+            background-color: #1f89c3;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .selection-panel button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .selection-panel button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .selection-panel button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #1f89c3;
+            text-align: center;
+            margin-top: 120px;
+            margin-bottom: 26.8px;
+        }
+    </style>
 </head>
+
 <body>
+    <div class="outer-wrapper">
+        <h1>Form Builder</h1>
+        <!-- The three main buttons -->
+        <div class="container">
+            <!-- Builder -->
+            <a id="builder" class="button-card" href="/builder">Builder</a>
+            <!-- Preview -->
+            <a id="preview" class="button-card" href="/form">Preview</a>
+            <!-- Import/Export -->
+            <a id="importBtn" class="button-card" href="#" onclick="toggleSlide(event)">Import/Export</a>
+        </div>
 
-  <div class="outer-wrapper">
-    <!-- The three main buttons -->
-    <div class="container">
-      <!-- Build -->
-      <a class="button-card" href="/builder">Build</a>
-      <!-- Preview -->
-      <a class="button-card" href="/form">Preview</a>
-      <!-- Import/Export -->
-      <a id="importBtn" class="button-card" href="#" onclick="toggleSlide(event)">Import/Export</a>
+        <!-- The Selection panel (initially hidden off the right side) -->
+        <div class="selection-panel" id="selectionPanel">
+            <h2>Selection</h2>
+
+            <!-- Radio buttons for Import/Export -->
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="mode" value="import">
+                    Import
+                </label>
+                <label>
+                    <input type="radio" name="mode" value="export">
+                    Export
+                </label>
+            </div>
+
+            <!-- Form name input -->
+            <input type="text" placeholder="Enter your form name..." id="formName" />
+
+            <!-- Author dropdown (hidden by default, shown only if 'export' is chosen) -->
+            <select id="authorSelect" style="display: none;">
+                <option value="" disabled selected>Select author...</option>
+            </select>
+
+            <!-- Save button (disabled until conditions met) -->
+            <button id="saveBtn" disabled onclick="save()">Go</button>
+        </div>
     </div>
 
-    <!-- Selection panel, initially hidden off-screen to the right -->
-    <div class="selection-panel" id="selectionPanel">
-      <h2>Selection</h2>
-      <p>Add any inputs, radio buttons, or other content here.</p>
-      <p>Example: Import / Export Options</p>
-    </div>
-  </div>
+    <script>
+        const formName = document.getElementById('formName');
+        const authorSelect = document.getElementById('authorSelect');
+        const saveBtn = document.getElementById('saveBtn');
+        const radioGroup = document.querySelectorAll('input[name="mode"]');
 
-  <script>
-    function toggleSlide(e) {
-      e.preventDefault(); // Prevent link navigation
-      const container = document.querySelector('.container');
-      const importBtn = e.currentTarget;
-      const panel = document.getElementById('selectionPanel');
+        async function setAuthors() {
+            const users = await fetch("api/images", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(async response => await response.json()) || [];
 
-      // Toggle the 'slide-left' class on the container
-      container.classList.toggle('slide-left');
+            console.log(users);
 
-      // Are we sliding left now?
-      const isSlideLeft = container.classList.contains('slide-left');
+            // Populate dropdown from fetched data
+            users.forEach(userSvg => {
+                const user = userSvg.replace('.svg', '');
+                const name = user.split('_')[0];
+                const id = user.split('_')[1];
 
-      // Highlight the Import/Export button if slid left
-      if (isSlideLeft) {
-        importBtn.classList.add('selected');
-        // Show the selection panel
-        panel.classList.add('show');
-      } else {
-        importBtn.classList.remove('selected');
-        // Hide the selection panel
-        panel.classList.remove('show');
-      }
-    }
-  </script>
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                authorSelect.appendChild(option);
+            });
+        }
+
+        function toggleSlide(e) {
+            e.preventDefault(); // Prevent link navigation
+            const container = document.querySelector('.container');
+            const importBtn = document.getElementById('importBtn');
+            const panel = document.getElementById('selectionPanel');
+            const buildBtn = document.getElementById('builder');
+            const previewBtn = document.getElementById('preview');
+
+            // Toggle the 'slide-left' class on the container
+            container.classList.toggle('slide-left');
+
+            // Hide the other buttons when sliding out
+            buildBtn.classList.toggle('slide-out');
+            previewBtn.classList.toggle('slide-out');
+
+            // Are we sliding left now?
+            const isSlideLeft = container.classList.contains('slide-left');
+
+            // Highlight the Import/Export button if slid left
+            if (isSlideLeft) {
+                importBtn.classList.add('selected');
+                // Clear the form when sliding in
+                formName.value = '';
+                authorSelect.selectedIndex = 0;
+                // Reset radio buttons
+                radioGroup.forEach(radio => {
+                    radio.checked = false;
+                });
+                // Hide the dropdown (only show on export)
+                authorSelect.style.display = 'none';
+                // Show the selection panel
+                panel.classList.add('show');
+            } else {
+                importBtn.classList.remove('selected');
+                // Hide the selection panel
+                panel.classList.remove('show');
+            }
+            // Update the Save button state
+            validateForm();
+        }
+
+        // Show/hide author dropdown & enable/disable "Save" button
+        function validateForm() {
+            let selectedMode = null;
+            radioGroup.forEach(radio => {
+                if (radio.checked) {
+                    selectedMode = radio.value;
+                }
+            });
+
+            // If 'export' is selected, show the dropdown
+            if (selectedMode === 'export') {
+                authorSelect.style.display = 'inline-block';
+            } else {
+                authorSelect.style.display = 'none';
+            }
+
+            // Check if a name is entered
+            const nameEntered = formName.value.trim().length > 0;
+
+            // If 'export' is selected, require author; if 'import', skip
+            const authorChosen = selectedMode === 'export'
+                ? (authorSelect.value !== "")
+                : true;
+
+            // We also need a mode selected
+            const modeSelected = !!selectedMode;
+
+            // Enable if all conditions are met
+            saveBtn.disabled = !(modeSelected && nameEntered && authorChosen);
+        }
+
+        async function save() {
+            const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+            const formName = document.getElementById('formName').value;
+            const userId = document.getElementById('authorSelect').value;
+
+            // Prepare the data to send
+            const data = {
+                mode: selectedMode,
+                formName,
+                userId
+            };
+
+            // Send the data to the server
+            const response = await fetch('api/form', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            // Handle the response
+            if (response.ok) {
+                if (selectedMode === 'export') {
+                    alert('Form exported successfully!');
+                } else {
+                    alert('Form imported successfully!');
+                }
+            } else {
+                if (selectedMode === 'export') {
+                    alert('Error exporting form!');
+                } else {
+                    alert('Error importing form!');
+                }
+            }
+        }
+
+        // Populate the author dropdown
+        setAuthors();
+
+        // Listen for changes on radios, text input, and select
+        radioGroup.forEach(radio => {
+            radio.addEventListener('change', validateForm);
+        });
+        formName.addEventListener('input', validateForm);
+        authorSelect.addEventListener('change', validateForm);
+    </script>
 </body>
+
 </html>

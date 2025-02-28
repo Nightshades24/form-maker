@@ -3,10 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FORM_NAME = process.argv[2];
-
-// Get form name from variable FORM_NAME from variables.json which is 1 level up
-const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8');
-const { USER } = JSON.parse(variables);
+const USER = process.argv[3];
 
 // Get the form/customcss.css file content as a string
 const customCss = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'customcss.css'), 'utf8');
@@ -68,7 +65,7 @@ function generateGUID() {
 
 const id = generateGUID();
 
-fs.writeFileSync(path.join(__dirname, '..', 'custom_form.json'), JSON.stringify({
+fs.writeFileSync(path.join(__dirname, '..', `${FORM_NAME}.json`), JSON.stringify({
     "id": id,
     "name": FORM_NAME,
     "author": USER,
