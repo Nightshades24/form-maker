@@ -1,6 +1,4 @@
 {
-    "FORM_NAME": "Example name",
-    "USER": "10b32635-f427-4d7e-ac73-bc7aa4ed3055",
-    "DMS": "https://demo.doccomplete.nl",
+    "DMS": "https://dms.blending.nl",
     "BEARER": "!---Bearer token---!"
 }
