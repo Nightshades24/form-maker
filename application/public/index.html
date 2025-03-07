@@ -3,244 +3,20 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Homepage</title>
     <link rel="icon" href="/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Optional Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', Arial, sans-serif;
-            background-color: #fff;
-            overflow: hidden;
-            /* Hide any horizontal scrollbars */
-        }
-
-        h1 {
-            font-size: 3.5em;
-            color: #1f89c3;
-            text-align: center;
-            margin-top: 120px;
-            margin-bottom: 26.8px;
-        }
-
-        /* Wrap everything so we can hide overflow during slide */
-        .outer-wrapper {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
-
-        /* Container for the three buttons */
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 180px;
-            /* Spacing between squares */
-            height: 60vh;
-            /* Full-height container minus some space for title */
-            transition: transform 0.6s ease;
-            /* Smooth slide animation */
-        }
-
-        /* Shift container to the left when .slide-left is applied */
-        .container.slide-left {
-            transform: translateX(-760px);
-        }
-
-        /* Shift buttons out the screen when .slide-out is applied */
-        .button-card.slide-out {
-            transform: translateX(-300%);
-        }
-
-        /* Each square "button" */
-        .button-card {
-            width: 200px;
-            height: 200px;
-            background-color: #1f89c3;
-            /* Primary color */
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            font-size: 1.3em;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            /* Make it clear these are clickable */
-        }
-
-        .button-card:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 5px 110px #5ba6ce;
-        }
-
-        .button-card:active {
-            transform: scale(0.98);
-        }
-
-        .button-card.selected {
-            box-shadow: 0 5px 110px #5ba6ce;
-        }
-
-        /* SELECTION PANEL */
-        .selection-panel {
-            position: absolute;
-            top: 40vh;
-            right: -400px;
-            /* Start off-screen to the right */
-            transform: translateY(-50%);
-            width: 320px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            transition: right 0.6s ease, opacity 0.6s ease;
-            opacity: 0;
-        }
-
-        /* When shown, slide in from the right */
-        .selection-panel.show {
-            right: 25%;
-            opacity: 1;
-        }
-
-        /* Example styling for the panel content */
-        .selection-panel h2 {
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            color: #1f89c3;
-        }
-
-        /* Radio group styling */
-        .radio-group {
-            margin-bottom: 10px;
-        }
-
-        .radio-group label {
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        /* Inputs, select, etc. */
-        .selection-panel input[type="text"],
-        .selection-panel select {
-            width: 80%;
-            margin: 10px 0;
-            padding: 8px;
-            border: 2px solid #1f89c3;
-            border-radius: 4px;
-            font-size: 1em;
-            outline: none;
-        }
-
-        .selection-panel input[type="text"]:focus,
-        .selection-panel select:focus {
-            border-color: #5ba6ce;
-        }
-
-        /* Submit button */
-        .selection-panel button {
-            background-color: #1f89c3;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 20px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .selection-panel button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .selection-panel button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .selection-panel button:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .input-container input {
-            width: 300px;
-            padding: 8px;
-            margin: 10px 0;
-            border: 2px solid #1f89c3;
-            border-radius: 5px;
-            font-size: 1em;
-            outline: none;
-        }
-
-        .input-container select {
-            width: 320px;
-            margin: 10px 0;
-            padding: 8px;
-            border: 2px solid #1f89c3;
-            border-radius: 4px;
-            font-size: 1em;
-            outline: none;
-        }
-
-        .save-button {
-            background-color: #1f89c3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            font-weight: 600;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.2s;
-        }
-
-        .save-button:hover {
-            background-color: #166a99;
-        }
-
-        .save-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .save-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .save-button:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-    </style>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 
 <body>
     <div class="outer-wrapper">
         <h1>Form Builder</h1>
         <!-- The three main buttons -->
-        <div class="container">
+        <div class="container"> 
             <!-- Builder -->
             <a id="builder" class="button-card" href="/builder">Builder</a>
             <!-- Preview -->
@@ -269,257 +45,31 @@
             <input type="text" placeholder="Enter your form name..." id="formName" />
 
             <!-- Author dropdown (hidden by default, shown only if 'export' is chosen) -->
-            <select id="authorSelect" style="display: none;">
+            <select id="authorSelect">
                 <option value="" disabled selected>Select author...</option>
             </select>
-            
+
             <!-- Submit button (disabled until conditions met) -->
             <button id="submitBtn" disabled onclick="submit()">Submit</button>
         </div>
         <div class="input-container">
             <div style="display: flex; align-items: end; flex-direction: column; padding-right: 80px;">
-                <label for="env" style="padding-right: 32px;">Environment: 
+                <label for="env" style="padding-right: 32px;">Environment:
                     <select id="env">
                         <option value="" disabled selected>Select environment...</option>
                         <option value="https://dms.blending.nl">https://dms.blending.nl/</option>
                         <option value="https://demo.doccomplete.nl">https://demo.doccomplete.nl</option>
                     </select>
                 </label>
-                <label for="bearer">Bearer: 
+                <label for="bearer">Bearer:
                     <input id="bearer" type="password" placeholder="Enter the Bearer API key">
-                    <i id="show-key" class="fas fa-eye" style="cursor: pointer; padding-left: 10px; width: 18px;" onclick="toggleBearerKey()"></i>
+                    <i id="show-key" class="fas fa-eye" style="cursor: pointer; padding-left: 10px; width: 18px;"
+                        onclick="toggleBearerKey()"></i>
                 </label>
             </div>
             <button id="save-button" class="save-button" disabled onclick="save()">Save</button>
         </div>
     </div>
-
-    <script>
-        const formName = document.getElementById('formName');
-        const authorSelect = document.getElementById('authorSelect');
-        const submitBtn = document.getElementById('submitBtn');
-        const radioGroup = document.querySelectorAll('input[name="mode"]');
-
-        let variables;
-
-        function toggleSlide(e) {
-            e.preventDefault(); // Prevent link navigation
-            const container = document.querySelector('.container');
-            const importBtn = document.getElementById('importBtn');
-            const panel = document.getElementById('selectionPanel');
-            const buildBtn = document.getElementById('builder');
-            const previewBtn = document.getElementById('preview');
-
-            // Toggle the 'slide-left' class on the container
-            container.classList.toggle('slide-left');
-
-            // Hide the other buttons when sliding out
-            buildBtn.classList.toggle('slide-out');
-            previewBtn.classList.toggle('slide-out');
-
-            // Are we sliding left now?
-            const isSlideLeft = container.classList.contains('slide-left');
-
-            // Highlight the Import/Export button if slid left
-            if (isSlideLeft) {
-                importBtn.classList.add('selected');
-                // Clear the form when sliding in
-                formName.value = '';
-                authorSelect.selectedIndex = 0;
-                // Reset radio buttons
-                radioGroup.forEach(radio => {
-                    radio.checked = false;
-                });
-                // Hide the dropdown (only show on export)
-                authorSelect.style.display = 'none';
-                // Show the selection panel
-                panel.classList.add('show');
-            } else {
-                importBtn.classList.remove('selected');
-                // Hide the selection panel
-                panel.classList.remove('show');
-            }
-            // Update the Save button state
-            validateForm();
-        }
-
-        function toggleBearerKey() {
-            const bearerInput = document.getElementById("bearer");
-            const eyeIcon = document.getElementById("show-key");
-            
-            if (bearerInput.type === "password") {
-                bearerInput.type = "text";
-                eyeIcon.classList.remove("fa-eye");
-                eyeIcon.classList.add("fa-eye-slash");
-            } else {
-                bearerInput.type = "password";
-                eyeIcon.classList.remove("fa-eye-slash");
-                eyeIcon.classList.add("fa-eye");
-            }
-        }
-
-        async function setAuthors() {
-            const users = await fetch("api/images", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(async response => await response.json()) || [];
-
-            // Populate dropdown from fetched data
-            users.forEach(userSvg => {
-                const user = userSvg.replace('.svg', '');
-                const name = user.split('_')[0];
-                const id = user.split('_')[1];
-
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = name;
-                authorSelect.appendChild(option);
-            });
-        };
-
-        async function setSettings() {
-            variables = await fetch("api/variables", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(async response => await response.json()) || {};
-
-            document.getElementById('env').value = variables.DMS;
-            document.getElementById('bearer').value = variables.BEARER == "!---Bearer token---!" ? "" : variables.BEARER;
-        }
-
-        // Show/hide author dropdown & enable/disable "Save" button
-        function validateForm() {
-            let selectedMode = null;
-            radioGroup.forEach(radio => {
-                if (radio.checked) {
-                    selectedMode = radio.value;
-                }
-            });
-
-            // If 'export' is selected, show the dropdown
-            if (selectedMode === 'export') {
-                authorSelect.style.display = 'inline-block';
-            } else {
-                authorSelect.style.display = 'none';
-            }
-
-            // Check if a name is entered
-            const nameEntered = formName.value.trim().length > 0 && !formName.value.includes('\"') && !formName.value.includes('\'');
-
-            // If 'export' is selected, require author; if 'import', skip
-            const authorChosen = selectedMode === 'export'
-                ? (authorSelect.value !== "")
-                : true;
-
-            // We also need a mode selected
-            const modeSelected = !!selectedMode;
-
-            // Enable if all conditions are met
-            submitBtn.disabled = !(modeSelected && nameEntered && authorChosen);
-        }
-
-        // Check if the settings are changed and valid
-        function validateSettings() {
-            const env = document.getElementById('env').value;
-            const bearer = document.getElementById('bearer').value;
-
-            // Check if the settings are valid
-            const settingsValid = env && bearer;
-
-            // Check if the settings are changed
-            const settingsChanged = env !== variables.DMS || bearer !== variables.BEARER;
-
-            // Enable the save button if the settings are valid and changed
-            document.getElementById("save-button").disabled = !(settingsValid && settingsChanged);
-        }
-
-        async function submit() {
-            const selectedMode = document.querySelector('input[name="mode"]:checked').value;
-            const formName = document.getElementById('formName').value;
-            const userId = document.getElementById('authorSelect').value;
-
-            // Prepare the data to send
-            const data = {
-                mode: selectedMode,
-                formName,
-                userId
-            };
-
-            // Send the data to the server
-            const response = await fetch('api/form', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            // Handle the response
-            if (response.ok) {
-                if (selectedMode === 'export') {
-                    alert('Form exported successfully!');
-                } else {
-                    alert('Form imported successfully!');
-                }
-            } else {
-                if (selectedMode === 'export') {
-                    alert('Error exporting form!');
-                } else {
-                    alert('Error importing form!');
-                }
-            }
-        }
-
-        async function save() {
-            const env = document.getElementById('env').value;
-            const bearer = document.getElementById('bearer').value;
-
-            // Prepare the data to send
-            const data = {
-                DMS: env,
-                BEARER: bearer
-            };
-
-            // Send the data to the server
-            const response = await fetch('api/variables', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            // Handle the response
-            if (response.ok) {
-                alert('Settings saved successfully!');
-                await setSettings();
-                validateSettings();
-            } else {
-                alert('Error saving settings!');
-            }
-        }
-
-        // Populate the settings
-        setSettings();
-        
-        // Populate the author dropdown
-        setAuthors();
-
-        // Listen for changes on radios, text input, and select in the form
-        radioGroup.forEach(radio => {
-            radio.addEventListener('change', validateForm);
-        });
-        formName.addEventListener('input', validateForm);
-        authorSelect.addEventListener('change', validateForm);
-
-        // Listen for changes on the settings
-        document.getElementById('env').addEventListener('input', validateSettings);
-        document.getElementById('bearer').addEventListener('input', validateSettings);
-    </script>
 </body>
 
 </html>
