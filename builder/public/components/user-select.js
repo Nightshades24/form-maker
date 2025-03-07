@@ -1586,7 +1586,7 @@ class UserSelectComponent extends Formio.Components.components.select {
     async loadItems(url, input, callback) {
         setTimeout(async () => {
             input = input || '';
-            const minSearch = this.component.minSearch;
+            const minSearch = this.component.minSearch || 0;
 
             if (input.length < minSearch) {
                 return;
@@ -1610,7 +1610,8 @@ class UserSelectComponent extends Formio.Components.components.select {
             }).then(async response => await response.json()) : { resources: [] };
 
             // Create links for all photo of users
-            if (this.firstLoad && window.location.pathname == "/builder/") {
+            const isBuilderEnv = window.location.pathname.includes("/builder");
+            if (this.firstLoad && isBuilderEnv) {
                 Promise.all(users.resources.map(async user => {
                     try {
                         const response = await fetch(user.photos[0].value);
@@ -1696,10 +1697,7 @@ class UserSelectComponent extends Formio.Components.components.select {
 
     addOption(value, label) {
         if (!_.isNil(label)) {
-            // Build your option object. Optionally include the idPath logic if needed.
             const option = {
-                // value: this.getOptionValue(value),
-                // label: label
                 value: value.value,
                 label: value.label,
             };
@@ -1712,10 +1710,7 @@ class UserSelectComponent extends Formio.Components.components.select {
             // Push the option into the selectOptions array.
             this.selectOptions.push(option);
 
-            // If we're using the html5 widget and we have a select container, create the option element.
             if (this.refs.selectContainer && this.component.widget === 'html5') {
-                // Instead of rendering a template and sanitizing it,
-                // we simply set innerHTML to our raw label.
                 const container = document.createElement('div');
                 container.innerHTML = label.trim();
                 option.element = container.firstChild;

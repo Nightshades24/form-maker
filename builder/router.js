@@ -78,7 +78,7 @@ router.use('/demo', createProxyMiddleware({
     on: {
         proxyReq: (proxyReq, req, res) => {
             proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
-            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl");
             if (req.path.includes("identityprovider")) return;
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         },
@@ -99,8 +99,8 @@ router.use('/prod', createProxyMiddleware({
     pathRewrite: { '^/prod': '' },
     on: {
         proxyReq: (proxyReq, req, res) => {
-            proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
-            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            proxyReq.setHeader('Origin', "https://dms.blending.nl");
+            proxyReq.setHeader('Referer', "https://dms.blending.nl");
             if (req.path.includes("identityprovider")) return;
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         },

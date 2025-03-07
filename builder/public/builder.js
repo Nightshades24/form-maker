@@ -1,4 +1,4 @@
-let defaultForm;
+let defaultFormSchema;
 let builder;
 
 const ogFetch = window.fetch;
@@ -15,14 +15,11 @@ const originalFetch = async (input, init = {}) => {
 window.originalFetch = originalFetch;
 
 // Load variables
-const variables = await originalFetch('/api/variables').then(async response => {
-    const vars = await response.json();
+const response = await originalFetch('/api/variables');
+const variables = await response.json();
+window.variables = variables;
 
-    window.variables = vars;
-    return vars;
-});
-
-const old = variables.DMS == "https://demo.doccomplete.nl";
+const isDemoEnv = variables.DMS == "https://demo.doccomplete.nl";
 
 // Intercept all fetch requests
 window.fetch = async (input, init = {}) => {
@@ -59,7 +56,7 @@ window.fetch = async (input, init = {}) => {
     init.headers = new Headers(init.headers || {});
 
     // Ensure Authorization header is correctly set with a Bearer token
-    if (!init.headers.has('Authorization') || init.headers.get('Authorization').trim() === "Bearer") {
+    if (!init.headers.has('Authorization') || !init.headers.get('Authorization').startsWith('Bearer ')) {
         init.headers.set('Authorization', `Bearer ${variables.BEARER}`);
     }
 
@@ -71,7 +68,7 @@ window.fetch = async (input, init = {}) => {
 async function initializeBuilder() {
 
     const form = await getLoadedForm(); // Fetch the form data
-    defaultForm = {
+    defaultFormSchema = {
         components: form
     };
 
@@ -164,7 +161,7 @@ async function initializeBuilder() {
         },
     };
 
-    if (!old) {
+    if (!isDemoEnv) {
         componentOrder.push("file");
         components.file = {
             documentation: "/userguide/form-building/premium-components#file",
@@ -248,14 +245,14 @@ async function initializeBuilder() {
     }
 
     // Assign builder to the global variable
-    builder = await new Formio.builder(document.getElementById('dvf-form-builder'), defaultForm, {
+    builder = await new Formio.builder(document.getElementById('dvf-form-builder'), defaultFormSchema, {
         builder: {
-            premium: old ? { title: 'Premium', weight: 40 } : false,
+            premium: isDemoEnv ? { title: 'Premium', weight: 40 } : false,
             data: {
                 componentOrder: componentOrder,
                 components: components,
             },
-            dvelop: old ? false : {
+            dvelop: isDemoEnv ? false : {
                 title: 'd.velop platform',
                 weight: 50,
             }
@@ -273,7 +270,7 @@ async function initializeBuilder() {
 
     window.builder = builder;
 
-    console.log("Builder initialized");
+    console.debug("Builder initialized");
 }
 
 // Fetch the form data
@@ -289,6 +286,11 @@ async function saveForm() {
         return;
     }
 
+    if (!await isFormModified()) {
+        console.debug("Form not modified, skipping save");
+        return;
+    }
+
     await originalFetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -299,10 +301,7 @@ async function saveForm() {
     document.getElementById('save-form').disabled = true;
 
     // Update the default form
-    defaultForm.components = builder.schema.components;
-
-    console.log(defaultForm.components);
-    console.log(await isFormModified());
+    defaultFormSchema.components = builder.schema.components;
 }
 
 async function isFormModified() {
@@ -339,7 +338,9 @@ async function isFormModified() {
 }
 
 // Initialize builder when the page loads
-setTimeout(async () => await initializeBuilder(), 100);
+setTimeout(async () => {
+    await initializeBuilder();
+}, 100);
 
 // Attach event listeners
 document.getElementById('save-form').addEventListener('click', saveForm);

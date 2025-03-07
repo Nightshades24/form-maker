@@ -14,7 +14,7 @@ const app = express();
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index_app.html'));
-})
+});
 
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
@@ -89,7 +89,7 @@ app.use('/demo', createProxyMiddleware({
     on: {
         proxyReq: (proxyReq, req, res) => {
             proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
-            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl");
             
             if (req.path.includes("identityprovider")) return;
             
@@ -112,8 +112,8 @@ app.use('/prod', createProxyMiddleware({
     pathRewrite: { '^/prod': '' }, // Removes "/prod" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
-            proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
-            proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
+            proxyReq.setHeader('Origin', "https://dms.blending.nl");
+            proxyReq.setHeader('Referer', "https://dms.blending.nl");
             
             if (req.path.includes("identityprovider")) return;
             
@@ -132,7 +132,7 @@ app.use('/prod', createProxyMiddleware({
 
 // Start the server
 app.listen(PORT, () => {
-    console.info(` [server] form builder running at http://localhost:${PORT}`,);
+    console.info(` [server] form builder running at http://localhost:${PORT}`);
     console.info(' [server] close this terminal or press Ctrl+C to quit.\n');
 });
 
