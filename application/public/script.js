@@ -90,7 +90,7 @@ async function setSettings() {
     }).then(async response => await response.json()) || {};
 
     document.getElementById('env').value = variables.DMS;
-    document.getElementById('bearer').value = variables.BEARER === "!---Bearer token---!" ? "" : variables.BEARER;
+    document.getElementById('bearer').value = variables.BEARER;
 }
 
 // Show/hide author dropdown & enable/disable "Save" button

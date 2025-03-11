@@ -63,7 +63,12 @@ app.post('/api/form', express.json(), (req, res) => {
 
 // API to get the variables from variables.json
 app.get('/api/variables', (req, res) => {
-    const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8') || '{}';
+    const varPath = path.join(__dirname, '..', 'variables.json');
+    if (!fs.existsSync(varPath)) {
+        fs.writeFileSync(varPath, '{ "DMS": "", "BEARER": "" }');
+    }
+
+    const variables = fs.readFileSync(path.join(__dirname, '..', 'variables.json'), 'utf8');
     res.json(JSON.parse(variables));
 });
 
