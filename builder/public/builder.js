@@ -23,6 +23,11 @@ const isDemoEnv = variables.DMS == "https://demo.doccomplete.nl";
 
 // Intercept all fetch requests
 window.fetch = async (input, init = {}) => {
+    // Wait until variables are loaded
+    while (!variables) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
     // Convert input to a URL object for easier handling
     let url;
     if (typeof input === "string") {

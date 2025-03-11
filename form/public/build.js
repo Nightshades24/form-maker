@@ -3,41 +3,32 @@
 /// Do not modify this file unless you know what you are doing.
 ///////////////////////////////////////////////////////////////////////////
 
+// Load all modules, variables, and custom actions from the server
+let variables;
+let moduleFiles;
+let customActions;
+
 // Save the original fetch function
 const ogFetch = window.fetch;
 
-// Save the original fetch function
+// Let "originalFetch" be a function that prepends the route with the path
 const originalFetch = async (input, init = {}) => {
     // Prepend the route with the path
     if (typeof input === "string" && input.startsWith('/api')) {
         input = window.location.pathname + input.slice(1);
-    } 
+    }
 
     return ogFetch(input, init);
-} ;
+};
 window.originalFetch = originalFetch;
-
-// Load all modules, variables, and custom actions
-const variables = await originalFetch('/api/variables').then(response => response.json());
-const moduleFiles = await originalFetch('/api/modules').then(response => response.json());
-const customActions = await originalFetch('/api/init').then(response => response.json());
-
-async function loadAllModules() {
-    for (const file of moduleFiles) {
-        try {
-            const path = window.location.pathname;
-            const module = await import(`${path.slice(0, path.length-1)}${file}`);
-            for (const [key, value] of Object.entries(module)) {
-                window[key] = value; // Attach module to window
-            }
-        } catch (error) {
-            console.error(`Error loading module ${file}:`, error);
-        }
-    }
-}
 
 // Intercept all fetch requests
 window.fetch = async (input, init = {}) => {
+    // Wait until variables are loaded
+    while (!variables) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
     // Convert input to a URL object for easier handling
     let url;
     if (typeof input === "string") {
@@ -80,11 +71,41 @@ window.fetch = async (input, init = {}) => {
 };
 
 // Load modules when the page loads and then load the init actions
-window.onload = loadAllModules()
-    .then(() => loadInitActions())
-    .then(() => setTimeout(disableTaskBtns, 1000));
+window.onload = async () => {
+    variables = await originalFetch('/api/variables').then(response => response.json());
+    moduleFiles = await originalFetch('/api/modules').then(response => response.json());
+    customActions = await originalFetch('/api/init').then(response => response.json());
 
-window.onchange = disableTaskBtns();
+    await loadAllModules();
+    await loadInitActions();
+    setTimeout(disableTaskBtns, 1000);
+};
+
+window.onchange = () => disableTaskBtns();
+
+async function loadAllModules() {
+    for (const file of moduleFiles) {
+        try {
+            const path = window.location.pathname;
+            const module = await import(`${path.slice(0, path.length - 1)}${file}`);
+            for (const [key, value] of Object.entries(module)) {
+                window[key] = value; // Attach module to window
+            }
+        } catch (error) {
+            console.error(`Error loading module ${file}:`, error);
+        }
+    }
+}
+
+async function loadInitActions() {
+    let form = window.Formio.forms[document.getElementsByClassName("formio-component-form")[0].id];
+    let data = form["_data"];
+
+    for (const action of customActions) {
+        const customFunction = new Function('form', 'data', action);
+        customFunction(form, data);
+    }
+}
 
 function disableTaskBtns() {
     // Select all elements with the given class
@@ -96,17 +117,6 @@ function disableTaskBtns() {
 
         button.disabled = true; // Disable the button
         button.title = "Not available in Formio preview, only in DMS."; // Set the tooltip
-        button.setAttribute("style", "cursor: not-allowed;"); // Change the cursor
-        button.setAttribute("style", "background-color:#747474 !important;" + "border-color: #d0d0d0;") // Grey out the button
+        button.setAttribute("style", "cursor: not-allowed; background-color:#747474 !important; border-color: #d0d0d0;"); // Change the cursor and grey out the button
     });
-}
-
-async function loadInitActions() {
-    let form = window.Formio.forms[document.getElementsByClassName("formio-component-form")[0].id];
-    let data = form["_data"];
-
-    for (const action of customActions) {
-        const customFunction = new Function('form', 'data', action);
-        customFunction(form, data);
-    }
 }

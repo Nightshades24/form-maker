@@ -33,16 +33,16 @@ app.use('/images', express.static(path.join(__dirname, '..', 'builder', 'public'
 app.use('/demo', createProxyMiddleware({
     target: 'https://demo.doccomplete.nl',
     changeOrigin: true,
-    pathRewrite: {  '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
+    pathRewrite: { '^/demo': '' }, // Removes "/api" but keeps the rest of the URL
     on: {
         proxyReq: (proxyReq, req, res) => {
             proxyReq.setHeader('Origin', "https://demo.doccomplete.nl");
             proxyReq.setHeader('Referer', "https://demo.doccomplete.nl/");
-            
+
             if (req.path.includes("identityprovider")) return;
-            
+
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
-            
+
             if (extensiveLogging) {
                 console.log("Method:", proxyReq.method);
                 console.log("Content-Length:", proxyReq.getHeader('Content-Length'));
@@ -52,14 +52,14 @@ app.use('/demo', createProxyMiddleware({
                 console.log("User-Agent:", proxyReq.getHeader('User-Agent'));
                 console.log("Host:", proxyReq.getHeader('Host'));
             }
-    
+
             if (req.body && Object.keys(req.body).length > 0) {
                 fixRequestBody(proxyReq, req)
             }
         },
         proxyRes: (proxyRes, req, res) => {
             if (req.path.includes("identityprovider")) return;
-            
+
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {
@@ -76,11 +76,11 @@ app.use('/prod', createProxyMiddleware({
         proxyReq: (proxyReq, req, res) => {
             proxyReq.setHeader('Origin', "https://dms.blending.nl");
             proxyReq.setHeader('Referer', "https://dms.blending.nl/");
-            
+
             if (req.path.includes("identityprovider")) return;
-            
+
             console.log(`\n[PROXY REQUEST] ${req.method} ${req.originalUrl} → ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
-            
+
             if (extensiveLogging) {
                 console.log("Method:", proxyReq.method);
                 console.log("Content-Length:", proxyReq.getHeader('Content-Length'));
@@ -90,14 +90,14 @@ app.use('/prod', createProxyMiddleware({
                 console.log("User-Agent:", proxyReq.getHeader('User-Agent'));
                 console.log("Host:", proxyReq.getHeader('Host'));
             }
-    
+
             if (req.body && Object.keys(req.body).length > 0) {
                 fixRequestBody(proxyReq, req)
             }
         },
         proxyRes: (proxyRes, req, res) => {
             if (req.path.includes("identityprovider")) return;
-            
+
             console.log(`[PROXY RESPONSE] ${req.method} ${req.originalUrl} ← ${proxyRes.statusCode}, ${proxyRes.statusMessage}`);
         },
         error: (err, req, res) => {
@@ -138,7 +138,7 @@ app.get('/api/init', (req, res) => {
         .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
         .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
         .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
-    
+
     // Parse the extracted JSON
     const formConfig = JSON.parse(cleanedComponents);
 
