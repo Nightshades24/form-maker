@@ -15,17 +15,20 @@ cd ../form
 :: Install dependencies (wait until it finishes)
 call npm install >nul 2>&1
 
+:: Go to /application directory
+cd ../application
+
+:: Install dependencies (wait until it finishes)
+call npm install >nul 2>&1
+
 :: Update user interface
 echo.
 echo All dependencies installed successfully!
 echo.
 echo Starting the application...
 
-:: Go to /application directory
-cd ../application
-
 :: Start a new minimized command window to install the dependencies and start the application
-start /min cmd /k "npm install && npm run dev"
+start /min cmd /k "npm run dev"
 
 :: Start a new minimized command window to handle the timeout and open localhost
 start /min cmd /k "timeout /t 10 /nobreak >nul && start http://localhost:1000 && exit"
