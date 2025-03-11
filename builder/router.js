@@ -9,7 +9,7 @@ const multer = require('multer');
 // Enable/disable LiveReload for the builder-router
 const UPDATE = false;
 
-// LiveReload setup
+// Port number
 const RL_PORT = 1010;
 
 // Use a router instead of a full app
