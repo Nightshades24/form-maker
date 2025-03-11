@@ -21,50 +21,67 @@ git clone https://github.com/Nightshades24/form-maker.git
 
 Or download the ZIP file from the repository and extract it to a folder on your machine.
 
-To run this project, make sure you have Node.js installed on your machine. You can download it from the official website: https://nodejs.org/.
+To run this project, make sure you have Node.js installed on your machine.
+ou can download it from the official website: https://nodejs.org/.
 
 ## Usage
+### Starting the Application
 
-Before you can use the project, you need to specify on which DMS you are going to work and a custom Bearer token for that DMS. 
-This token is used to authenticate the user and allow access to the DMS. 
-You can specify these values in the `variables.json` file. 
-The file should look like this:
-
-```json
-{
-    "FORM_NAME": "Example name",
-    "USER": "User key",
-    "DMS": "https://example.doccomplete.com",
-    "BEARER": "abcEFG123"
-}
-```
-
-Replace the values with the correct DMS URL and Bearer token. 
-The DMS URL should be the base URL of the DMS, without any paths or query parameters. 
-The Bearer token should be a string of characters.
-To get the Bearer token, navigate to the DMS and log in. 
-Then open "Configuration" -> "Login options" and press on the fingerprint icon on the right.
-Here you can manage the Bearer tokens and create a new one.
-**Note that the Bearer token only works for the DMS it was created on.**
-
-Here, you can also edit what the form name and last editor should be when you upload it to the DMS, but this is not necessary.
-
-Once you have specified the DMS and Bearer token, you can start the project.
-To start the form, you can execute `start.bat` or run the following commands in the terminal:
+To start the application, execute `start.bat`.
+This will show a loading bar, and open a command prompt window in the background which runs the following commands:
 
 ```bash
+cd path/to/form-maker/form
 npm install
 npm run dev
 ```
+and then open the browser at `http://localhost:1000`.
+The first time you run the project, it will probably take more time to start than the loading bar suggests, because it needs to install all the dependencies.
+This means that when the loading bar is finished, the project might still be installing dependencies and the browser might show that it can't connect to the server.
+This is normal. Just wait a bit longer and refresh the page.
+After the first time, it will start faster and the loading bar will be more accurate.
+If the start script fails, you can also run the commands manually in the terminal
 
-This will install the required dependencies and start the project in development mode. 
-The project will be available at `http://localhost:8080`.
+When the project has started, you are greeted with a homepage.
+Here you first need to specify on which DMS you are going to work and add a custom Bearer token **for that DMS**.
+To get the Bearer token, navigate to the DMS and log in.
+Then open "Configuration" -> "Login options" and press on the fingerprint icon on the right.
+Here you can manage the Bearer tokens and create a new one.
+When you have done this, the buttons on the homepage will be enabled and you can start creating forms.
 
-To convert the form to JSON format for the DMS, execute `export.bat`. 
-This will generate a `custom_form.json` file containing the form definition in JSON format.
+### Creating a Form
 
-To convert a form downloaded from the DMS to the project format, make sure you named the form `custom_form.json` and then execute `import.bat`. 
-This will generate the form in the project format.
+To create a form, click on the "Builder" button on the homepage.
+This will open the form builder, where you can add form components and customize their properties.
+You can add new components by dragging them from the left sidebar to the form canvas.
+You can customize the properties of each component by clicking on the component in the form canvas.
+You can also rearrange the components by dragging them to a new position.
+When you are done creating the form, click on the "Save" button to save the form.
+You can also use "Ctrl + S" to save the form.
+The form will be saved in the `form/public/js/form.js` file and replace the existing form.
+
+To view the form, click on the "Form" button on the homepage, or from the builder click on the eye icon next to the save button.
+This will open the form viewer, where you can see the form that is defined in the `form.js` file.
+You can interact with the form and test its functionality.
+The form will automatically update when the `form.js` file is changed, so you don't need to refresh the page to see the changes.
+
+### Importing a Form
+
+To import a form, click on the "Import/Export" button on the homepage.
+This will open the import/export page, where you can import a form from a JSON file.
+Select "Import" and enter the filename of the JSON file that contains the form.
+The file needs to be in the correct format, that is, the format from the Form Builder in the DMS and needs to be in the `form-maker/` directory.
+If the file is in the correct format and location, click on the "Import" button to import the form.
+If the form is successfully imported, you will see a success message.
+
+### Exporting a Form
+
+To export a form, click on the "Import/Export" button on the homepage.
+This will open the import/export page, where you can export the form to a JSON file.
+Select "Export" and enter the name of your form and select the author.
+Click on the "Export" button to export the form.
+The form will be exported to a JSON file in the `form-maker/` directory.
+You can directly upload it to the DMS.
 
 ## File Structure
 
@@ -72,44 +89,67 @@ The project has the following structure:
 
 ```
 form-maker/
+├── application/
+│   ├── public/
+│   |   ├── style.css
+│   |   ├── index.html
+│   |   ├── favicon.ico
+│   |   └── script.js
+│   |
+│   ├── app.js
+│   ├── package-lock.json
+│   └── package.json
+|
+├── builder/
+│   ├── public/
+│   │   ├── images/
+│   │   ├── components/
+│   │   |   ├── process-start.js
+│   │   |   ├── task-completion.js
+│   │   |   └── user-select.js
+│   │   |
+│   │   ├── index_app.html
+│   │   ├── index.html
+│   |   ├── favicon.ico
+│   |   └── builder.js
+|   |
+│   ├── app.js
+│   ├── router.js
+│   ├── package-lock.json
+│   └── package.json
+|
 ├── conversion/
 │   ├── convert_from_json.js
 │   └── convert_to_json.js
 |
 ├── form/
-│   ├── node_modules/
 │   ├── public/
-|   │   ├── font-awesome/
+|   │   ├── images/
 │   │   ├── js/
 │   │   |   ├── form.js
 │   │   |   └── main.js
 │   │   |
 │   │   ├── customcss.css
-│   │   ├── style.css
+│   │   ├── index_app.html
 │   │   ├── index.html
 │   |   ├── favicon.ico
 │   |   └── build.js
 |   |
 │   ├── app.js
+│   ├── router.js
 │   ├── package-lock.json
 │   └── package.json
 |
 ├── .gitattributes
 ├── .gitignore
-├── export form.bat
-├── import form.bat
 ├── start.bat
-├── custom_form.json
-├── variables.json
 └── README.md
 ```
 
 The following files can be edited to customize the form:
-- `form/public/`: Contains the main files for the form and exposes them to the browser.
 - `form/public/customcss.css`: Contains custom CSS styles for the form.
-- `form/public/js/`: Contains JavaScript files for form functionality. Here you can add new JavaScript files.
+- `form/public/js/`: Contains JavaScript files for form functionality. Here you can add new JavaScript files and edit existing ones.
 - `form/public/js/form.js`: Defines the form components and their properties.
-- `variables.json`: Contains variables such as "name" and "creator" used for defining the form in the DMS.
 
 **Note: Do not edit any other files unless you know what you are doing.**
 
@@ -122,14 +162,14 @@ These styles will be applied to the form to enhance its appearance.
 
 ### Custom Form
 
-You can customize the form components and their properties in the `form/public/form.js` file. 
-This file defines the form structure and properties using Form.io's JSON schema format. <br>
-**Do not add a newline at the end of the file!**
+You can customize the form components and their properties using the form builder.
+If you want to manually change them in the code, you can do so in the `form/public/form.js` file.
+This file defines the form structure and properties using Form.io's JSON schema format.
 
 ### Custom JavaScript
 
-You can add custom JavaScript functions in the `form/public/js/` directory. 
-These functions can be used to add custom behavior to the form components. 
+You can add custom JavaScript functions in the `form/public/js/` directory.
+These functions can be used to add custom behavior to the form components.
 It should not be added to the `form.js` file, since the JavaScript in this file will be ignored at conversion.
 
 To declare a initializerFunction and get the form component and data object you can use the normal way of using the "dv-intialized" event, or you can use the following declarations:
@@ -146,13 +186,17 @@ setTimeout(() => {
 }, 100);
 ```
 
-It is important to use a timeout and set it to 100ms to ensure that the form is fully loaded before the function is executed. This is because the DMS is slower that this local version. Not using a timeout will work locally, but not in the DMS.
+It is important to use a timeout and set it to 100ms to ensure that the form is fully loaded before the function is executed.
+This is because the DMS is slower that this local version.
+Not using a timeout will sometimes work locally, but definitely not in the DMS.
 
-Because this project is built using Webpack, you can use ES6 syntax and features in your JavaScript files. However, you should not use import statements in these files, as they will not work.
+Because this project is built using Webpack, you can use ES6 syntax and features in your JavaScript files.
+However, you should not use import statements in these files, as they will not work.
 
 ### Adding New JavaScript Files
-All files in `form/public/js/` are bundled together at conversion (except for `form.js`). You can add new JavaScript files to this directory and they will be included in the bundle.
-**Don't forget to add a single line to every new JavaScript file you add which exports all the functions in the file.**
+All files in `form/public/js/` are bundled together at conversion (except for `form.js`).
+You can add new JavaScript files to this directory and they will be included in the bundle.
+**Don't forget to add an export statement to every new JavaScript file you add which exports all the functions in the file.**
 
 ```javascript
 export { 
