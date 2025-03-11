@@ -89,8 +89,15 @@ async function setSettings() {
         }
     }).then(async response => await response.json()) || {};
 
-    document.getElementById('env').value = variables.DMS;
-    document.getElementById('bearer').value = variables.BEARER;
+    const env = document.getElementById('env')
+    const bearer = document.getElementById('bearer')
+    
+    env.value = variables.DMS;
+    bearer.value = variables.BEARER;
+
+    // Disable builder and preview buttons by toggling the .disabled class
+    document.getElementById('builder').classList.toggle('disabled', variables.DMS == "" || variables.BEARER == "");
+    document.getElementById('preview').classList.toggle('disabled', variables.DMS == "" || variables.BEARER == "");
 }
 
 // Show/hide author dropdown & enable/disable "Save" button
@@ -227,4 +234,18 @@ window.onload = function () {
     // Listen for changes on the settings
     document.getElementById('env').addEventListener('input', validateSettings);
     document.getElementById('bearer').addEventListener('input', validateSettings);
+
+    // Disable the buttons if the settings are not set
+    document.getElementById('builder').addEventListener('click', (e) => {
+        if (document.getElementById('builder').classList.contains('disabled')) {
+            e.preventDefault();
+            alert('Please set the DMS and Bearer Key in the settings');
+        }
+    });
+    document.getElementById('preview').addEventListener('click', (e) => {
+        if (document.getElementById('preview').classList.contains('disabled')) {
+            e.preventDefault();
+            alert('Please set the DMS and Bearer Key in the settings');
+        }
+    });
 };

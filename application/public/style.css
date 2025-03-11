@@ -79,6 +79,17 @@ h1 {
     transform: scale(0.98);
 }
 
+.button-card.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    /* pointer-events: none; */
+}
+
+.button-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 .button-card.selected {
     box-shadow: 0 5px 110px #5ba6ce;
 }
