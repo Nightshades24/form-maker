@@ -2,8 +2,20 @@
 chcp 65001 >nul
 echo Starting the application...
 
+:: Go to /builder directory
+cd builder
+
+:: Start a new minimized command window to install the dependencies
+start /min cmd /k "npm install && exit"
+
+:: Go to /form directory
+cd ../form
+
+:: Start a new minimized command window to install the dependencies
+start /min cmd /k "npm install &&"
+
 :: Go to /application directory
-cd application
+cd ../application
 
 :: Start a new minimized command window to install the dependencies and start the application
 start /min cmd /k "npm install && npm run dev"
