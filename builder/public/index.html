@@ -21,6 +21,10 @@
         <script type="module" src="components/task-completion.js"></script>
     </div>
 
+    <a id="preview" class="btn btn-primary btn-md" href="/form" target="_blank">
+        <i class="fa fa-eye"></i>
+    </a>
+
     <button id="save-form" class="btn btn-primary btn-md" disabled>
         <i class="fa fa-save"></i>
         <b>SAVE</b>
@@ -29,6 +33,24 @@
 
     <style>
         /* Keep button positioned at bottom-right */
+        #preview {
+            position: fixed;
+            bottom: 24px;
+            right: 155px;
+            padding: 12px 16px;
+            font-weight: 500;
+            font-size: 16px;
+            border-radius: 8px;
+            box-shadow: 0 0px 20px rgba(0, 0, 0, 0.69);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        #preview:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 0px 25px #1f89c3b0;
+        }
+
         #save-form {
             position: fixed;
             bottom: 24px;
@@ -38,12 +60,19 @@
             font-size: 16px;
             border-radius: 8px;
             box-shadow: 0 0px 20px rgba(0, 0, 0, 0.69);
+            transition: transform 0.2s, box-shadow 0.2s;
             cursor: not-allowed;
+            width: 107px;
         }
 
         /* Change cursor when button is enabled */
         #save-form:not(:disabled) {
             cursor: pointer;
+        }
+
+        #save-form:not(:disabled):hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 0px 25px #1f89c3b0;
         }
 
         /* Tooltip Styling */
