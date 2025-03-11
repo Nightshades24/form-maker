@@ -5,9 +5,14 @@ const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 
-const router = express.Router();
+// Enable extensive logging in the proxy
 const extensiveLogging = false;
+
+// Port number
 const RL_PORT = 2020;
+
+// Use a router instead of a full app
+const router = express.Router();
 
 // LiveReload setup
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
@@ -117,9 +122,9 @@ router.get('/api/init', (req, res) => {
         return;
     }
     const cleanedComponents = `[${components}]`
-        .replace(/\\r\\n/g, '')
-        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3')
-        .replace(/,(\s*[}\]])/g, '$1');
+        .replace(/\\r\\n/g, '')                         // Remove Windows-style newlines (\r\n)
+        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3')   // Add double quotes around keys
+        .replace(/,(\s*[}\]])/g, '$1');                 // Remove trailing commas before } or ]
     const formConfig = JSON.parse(cleanedComponents);
     if (!formConfig || !Array.isArray(formConfig)) {
         console.log("No components found in form.");

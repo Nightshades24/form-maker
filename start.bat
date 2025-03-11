@@ -5,7 +5,7 @@ echo Starting the application...
 :: Go to /application directory
 cd application
 
-:: Install the dependencies and start the application (runs in a separate command window)
+:: Start a new minimized command window to install the dependencies and start the application
 start /min cmd /k "npm install && npm run dev"
 
 :: Start a new minimized command window to handle the timeout and open localhost

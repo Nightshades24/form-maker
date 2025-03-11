@@ -14,6 +14,7 @@ const RL_PORT = 3030;
 
 const app = express();
 
+// Serve the form preview app on the root URL
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index_app.html'));
 })
@@ -22,8 +23,6 @@ app.get('/', (req, res) => {
 const liveReloadServer = livereload.createServer({ port: RL_PORT });
 liveReloadServer.watch([path.join(__dirname, 'public'), path.join(__dirname, '..', 'builder', 'public', 'components')]); // Watch changes in /public
 app.use(connectLivereload({ port: RL_PORT })); // Enable LiveReload in Express
-
-app.use(express.raw({ type: 'application/json' })); // For raw payloads
 
 // Serve static files (HTML, CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -135,9 +134,9 @@ app.get('/api/init', (req, res) => {
     }
 
     const cleanedComponents = `[${components}]`
-        .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
-        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
-        .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
+        .replace(/\\r\\n/g, '')                         // Remove Windows-style newlines (\r\n)
+        .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3')   // Add double quotes around keys
+        .replace(/,(\s*[}\]])/g, '$1');                 // Remove trailing commas before } or ]
 
     // Parse the extracted JSON
     const formConfig = JSON.parse(cleanedComponents);

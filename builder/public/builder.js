@@ -1,16 +1,16 @@
 let defaultFormSchema;
 let builder;
 
-const ogFetch = window.fetch;
-
 // Save the original fetch function
+const legacyFetch = window.fetch;
+
+// Change the legacy fetch function to prepend the base URL to the route
 const originalFetch = async (input, init = {}) => {
-    // Prepend the route with the path
     if (typeof input === "string" && input.startsWith('/api')) {
         input = window.location.pathname + input.slice(1);
     } 
 
-    return ogFetch(input, init);
+    return legacyFetch(input, init);
 } ;
 window.originalFetch = originalFetch;
 
@@ -77,6 +77,7 @@ async function initializeBuilder() {
         components: form
     };
 
+    // Define the component order and components
     const componentOrder = [
         "hidden",
         "container",
@@ -166,6 +167,7 @@ async function initializeBuilder() {
         },
     };
 
+    // If not in demo environment, change builder to prod environment
     if (!isDemoEnv) {
         componentOrder.push("file");
         components.file = {
@@ -264,6 +266,7 @@ async function initializeBuilder() {
         }
     });
 
+    // Add event listener to check if the form has been modified when the user clicks
     document.addEventListener("mousedown", function () {
         setTimeout(async () => {
             document.getElementById('save-form').disabled = !(await isFormModified());

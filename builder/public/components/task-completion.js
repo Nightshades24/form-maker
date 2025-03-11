@@ -1,4 +1,5 @@
 class TaskCompletionComponent extends Formio.Components.components.button {
+    // Define the JSON schema for the component *DO NOT EDIT*
     static schema() {
         return {
             "input": true,
@@ -78,6 +79,7 @@ class TaskCompletionComponent extends Formio.Components.components.button {
         };
     }
 
+    // Define the edit menu of the component *DO NOT EDIT*
     static editForm() {
         return {
             "components": [
@@ -1018,6 +1020,7 @@ class TaskCompletionComponent extends Formio.Components.components.button {
         };
     }
 
+    // Add the component to the Formio.Components object *DO NOT EDIT*
     static get builderInfo() {
         return {
             title: 'Task Completion',
@@ -1028,6 +1031,7 @@ class TaskCompletionComponent extends Formio.Components.components.button {
         };
     }
 
+    // Define the component's preview *DO NOT EDIT*
     render() {
         return super.render(`
             <button class="btn btn-primary">Complete task</button>

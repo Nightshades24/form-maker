@@ -4,6 +4,7 @@ const path = require('path');
 
 const FORM_NAME = process.argv[2];
 
+// Read the form definition from {FORM_NAME}.json
 let formJson;
 try {
     formJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', `${FORM_NAME}.json`), 'utf8'));
@@ -12,8 +13,8 @@ catch (error) {
     console.error(`Error reading or parsing the file ${FORM_NAME}.json:`, error);
     process.exit(1);
 }
-const form = formJson.definition && formJson.definition.formioFormDefinition ? formJson.definition : JSON.parse(formJson.definition || '{}');
 
+const form = formJson.definition && formJson.definition.formioFormDefinition ? formJson.definition : JSON.parse(formJson.definition || '{}');
 const components = form.formioFormDefinition.components;
 const customCss = form.customCss;
 const customJs = form.customJs;
@@ -30,6 +31,7 @@ fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), 
 
 // Get all function names and objects from form/public/js/main.js
 const mainJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public', 'js', 'main.js'), 'utf8');
+
 const functionMatches = mainJsContent.match(/function\s+(\w+)\s*\(/g);
 const functionNames = functionMatches ? functionMatches.map(match => match.match(/function\s+(\w+)\s*\(/)[1]) : [];
 
@@ -41,24 +43,31 @@ let mainJsExportContent = `${mainJsContent}`;
 
 // Write every object to form/public/js/objectName.js and export the objects
 objectNames.forEach(objectName => {
-    // Check if objectName starts with a capital letter
+    // Skip if objectName starts with a lowercase letter
     if (!/^[A-Z]/.test(objectName)) return;
     
-    const objectMatch = mainJsContent.match(new RegExp(`const\\s+${objectName}\\s*=\\s*\\{[\\s\\S]*?^};`, 'm'));
+    // Write the object content to form/public/js/objectName.js
+    const objectMatch = mainJsContent.match(new RegExp(`const\\s+${objectName}\\s*=\\s*\\{[\\s\\S]*?^};?`, 'm'));
     if (!objectMatch) return;
     const objectContent = objectMatch[0];
-    const objectExportContent = `export ${objectContent}`;
-    fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', `${objectName}.js`), objectExportContent);
+    const objectFileContent = `export ${objectContent}`;
+    fs.writeFileSync(path.join(__dirname, '..', 'form', 'public', 'js', `${objectName}.js`), objectFileContent);
 
     // Remove the object content from mainJsExportContent
     mainJsExportContent = mainJsExportContent.replace(objectContent, '');
 });
+
+// Filter out all constants and variables
 const constMatches = mainJsExportContent.match(/^const\s+(\w+)\s*=\s*/gm);
 const letMatches = mainJsExportContent.match(/^let\s+(\w+)\s*=\s*/gm);
+const varMatches = mainJsExportContent.match(/^var\s+(\w+)\s*=\s*/gm);
 
 const variableConst = constMatches ? constMatches.map(match => match.match(/^const\s+(\w+)\s*=\s*/)[1]) : [];
 const variableLet = letMatches ? letMatches.map(match => match.match(/^let\s+(\w+)\s*=\s*/)[1]) : [];
-const exportJsExportContent = [functionNames.join(',\n    '), variableConst.join(',\n    '), variableLet.join(',\n    ')].filter(Boolean).join(',\n    ');
+const variableVar = varMatches ? varMatches.map(match => match.match(/^var\s+(\w+)\s*=\s*/)[1]) : [];
+
+// Export all functions, constants and variables and write this new content to form/public/js/main.js
+const exportJsExportContent = [functionNames.join(',\n    '), variableConst.join(',\n    '), variableLet.join(',\n    '), variableVar.join(',\n    ')].filter(Boolean).join(',\n    ');
 
 mainJsExportContent = `${mainJsExportContent.trim()}\n\nexport {\n    ${exportJsExportContent}\n};\n`;
 

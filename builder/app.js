@@ -12,6 +12,7 @@ const RL_PORT = 2020;
 
 const app = express();
 
+// Serve the builder app on the root URL
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index_app.html'));
 });

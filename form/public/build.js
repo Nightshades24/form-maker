@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
-/// This file is responsible for loading all modules in the form directory.
-/// Do not modify this file unless you know what you are doing.
+/// This file is responsible for loading all modules in the form directory,
+//  and should not be modified unless you know what you are doing.
+/// To add javascript to the form, use files in the "/public/js" directory.
 ///////////////////////////////////////////////////////////////////////////
 
 // Load all modules, variables, and custom actions from the server
@@ -9,16 +10,16 @@ let moduleFiles;
 let customActions;
 
 // Save the original fetch function
-const ogFetch = window.fetch;
+const legacyFetch = window.fetch;
 
-// Let "originalFetch" be a function that prepends the route with the path
+// Change the legacy fetch function to prepend the base URL to the route
 const originalFetch = async (input, init = {}) => {
     // Prepend the route with the path
     if (typeof input === "string" && input.startsWith('/api')) {
         input = window.location.pathname + input.slice(1);
     }
 
-    return ogFetch(input, init);
+    return legacyFetch(input, init);
 };
 window.originalFetch = originalFetch;
 

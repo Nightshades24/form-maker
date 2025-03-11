@@ -6,17 +6,20 @@ const connectLivereload = require('connect-livereload');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const multer = require('multer');
 
+// Enable/disable LiveReload for the builder-router
+const UPDATE = false;
+
+// LiveReload setup
+const RL_PORT = 1010;
+
 // Use a router instead of a full app
 const router = express.Router();
 
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
-// LiveReload setup
-const UPDATE = false;
-const RL_PORT = 1010;
-
 if (UPDATE) {
+    // LiveReload setup
     const liveReloadServer = livereload.createServer({ port: RL_PORT });
     liveReloadServer.watch(path.join(__dirname, 'public'));
     router.use(connectLivereload({ port: RL_PORT }));

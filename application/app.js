@@ -5,7 +5,7 @@ const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const exec = require('child_process').exec;
 
-// Enable/disable LiveReload for full application
+// Enable/disable LiveReload for homepage
 const UPDATE = false;
 
 // Port number
@@ -14,6 +14,7 @@ const PORT = 1000;
 const app = express();
 
 if (UPDATE) {
+    // LiveReload setup
     const liveReloadServer = livereload.createServer();
     liveReloadServer.watch([
         path.join(__dirname, 'public'), 

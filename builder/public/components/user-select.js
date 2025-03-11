@@ -1,6 +1,143 @@
 class UserSelectComponent extends Formio.Components.components.select {
     firstLoad = true;
 
+    // Load the users and groups from the identity provider
+    async loadItems(url, input, callback) {
+        input = input || '';
+        const minSearch = this.component.minSearch || 0;
+
+        if (input.length < minSearch) {
+            return;
+        }
+
+        const count = this.component.limit;
+        const startIndex = 0;
+        const format = this.component.outputFormat;
+
+        const users = this.component.includeUsers ? await fetch(`/identityprovider/scim/Users?count=${count}&startIndex=${startIndex}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async response => await response.json()) : { resources: [] };
+        const groups = this.component.includeGroups ? await fetch(`/identityprovider/scim/Groups?count=${count}&startIndex=${startIndex}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async response => await response.json()) : { resources: [] };
+
+        // Create links for all photo of users
+        const isBuilderEnv = window.location.pathname.includes("/builder");
+        if (this.firstLoad && isBuilderEnv) {
+            Promise.all(users.resources.map(async user => {
+                try {
+                    const response = await fetch(user.photos[0].value);
+                    const blob = await response.blob();
+
+                    // Send the pictures to /api/pictures to store them
+                    const formData = new FormData();
+                    formData.append("id", user.id);
+                    formData.append("displayName", user.displayName);
+                    formData.append("image", blob, `${user.id}.png`);
+
+                    await originalFetch('/api/picture', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                } catch (error) { } // Catch if not called by form builder
+            }));
+            this.firstLoad = false;
+        }
+
+        let result;
+
+        switch (format) {
+            case 'identity':
+                //.resources[0].displayName
+                const u1 = users.resources.map(async user => ({
+                    label: `<img src="${window.location.pathname}images/${user.displayName}_${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    value: `identity:///identityprovider/scim/users/${user.id}`,
+                }));
+
+                const g1 = groups.resources.map(group => ({
+                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
+                            \n${group.displayName}`,
+                    value: `identity:///identityprovider/scim/groups/${group.id}`,
+                }));
+
+                result = u1.concat(g1);
+
+                break;
+
+            case 'id':
+                //.resources[0].id
+                const u2 = users.resources.map(user => ({
+                    label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    value: user.id,
+                }));
+                const g2 = groups.resources.map(group => ({
+                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
+                            \n${group.displayName}`,
+                    value: group.id,
+                }));
+
+                result = u2.concat(g2);
+
+                break;
+
+            case 'object':
+                //.resources[0]
+                const u3 = users.resources.map(user => ({
+                    label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
+                    value: user,
+                }));
+                const g3 = groups.resources.map(group => ({
+                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
+                            \n${group.displayName}`,
+                    value: group,
+                }));
+
+                result = u3.concat(g3);
+
+                break;
+
+            default:
+                result = [];
+                break;
+        }
+
+        result = await Promise.all(result);
+
+        this.setItems(result, true);
+    }
+
+    // Set the items of the select dropdown
+    addOption(value, label) {
+        if (!_.isNil(label)) {
+            const option = {
+                value: value.value,
+                label: value.label,
+            };
+
+            // Check for unique options if configured.
+            if (this.component.uniqueOptions && this.selectOptions.find((item) => _.isEqual(item.value, option.value))) {
+                return;
+            }
+
+            // Push the option into the selectOptions array.
+            this.selectOptions.push(option);
+
+            if (this.refs.selectContainer && this.component.widget === 'html5') {
+                const container = document.createElement('div');
+                container.innerHTML = label.trim();
+                option.element = container.firstChild;
+                this.refs.selectContainer.appendChild(option.element);
+            }
+        }
+    }
+
+    // Define the JSON schema for the component *DO NOT EDIT*
     static schema() {
         return {
             "input": true,
@@ -111,6 +248,7 @@ class UserSelectComponent extends Formio.Components.components.select {
         };
     }
 
+    // Define the edit menu of the component *DO NOT EDIT*
     static editForm() {
         return {
             "components": [
@@ -1573,6 +1711,7 @@ class UserSelectComponent extends Formio.Components.components.select {
         };
     }
 
+    // Add the component to the Formio.Components object *DO NOT EDIT*
     static get builderInfo() {
         return {
             title: 'User Select',
@@ -1583,140 +1722,7 @@ class UserSelectComponent extends Formio.Components.components.select {
         };
     }
 
-    async loadItems(url, input, callback) {
-        input = input || '';
-        const minSearch = this.component.minSearch || 0;
-
-        if (input.length < minSearch) {
-            return;
-        }
-
-        const count = this.component.limit;
-        const startIndex = 0;
-        const format = this.component.outputFormat;
-
-        const users = this.component.includeUsers ? await fetch(`/identityprovider/scim/Users?count=${count}&startIndex=${startIndex}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(async response => await response.json()) : { resources: [] };
-        const groups = this.component.includeGroups ? await fetch(`/identityprovider/scim/Groups?count=${count}&startIndex=${startIndex}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(async response => await response.json()) : { resources: [] };
-
-        // Create links for all photo of users
-        const isBuilderEnv = window.location.pathname.includes("/builder");
-        if (this.firstLoad && isBuilderEnv) {
-            Promise.all(users.resources.map(async user => {
-                try {
-                    const response = await fetch(user.photos[0].value);
-                    const blob = await response.blob();
-
-                    // Send the pictures to /api/pictures to store them
-                    const formData = new FormData();
-                    formData.append("id", user.id);
-                    formData.append("displayName", user.displayName);
-                    formData.append("image", blob, `${user.id}.png`);
-
-                    await originalFetch('/api/picture', {
-                        method: 'POST',
-                        body: formData,
-                    });
-                } catch (error) { } // Catch if not called by form builder
-            }));
-            this.firstLoad = false;
-        }
-
-        let result;
-
-        switch (format) {
-            case 'identity':
-                //.resources[0].displayName
-                const u1 = users.resources.map(async user => ({
-                    label: `<img src="${window.location.pathname}images/${user.displayName}_${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
-                    value: `identity:///identityprovider/scim/users/${user.id}`,
-                }));
-
-                const g1 = groups.resources.map(group => ({
-                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
-                            \n${group.displayName}`,
-                    value: `identity:///identityprovider/scim/groups/${group.id}`,
-                }));
-
-                result = u1.concat(g1);
-
-                break;
-
-            case 'id':
-                //.resources[0].id
-                const u2 = users.resources.map(user => ({
-                    label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
-                    value: user.id,
-                }));
-                const g2 = groups.resources.map(group => ({
-                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
-                            \n${group.displayName}`,
-                    value: group.id,
-                }));
-
-                result = u2.concat(g2);
-
-                break;
-
-            case 'object':
-                //.resources[0]
-                const u3 = users.resources.map(user => ({
-                    label: `<img src="${window.location.pathname}images/${user.id}.svg" style="width:24px; margin-right:16px">\n${user.displayName}`,
-                    value: user,
-                }));
-                const g3 = groups.resources.map(group => ({
-                    label: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px; margin-right:16px"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"></path></svg>
-                            \n${group.displayName}`,
-                    value: group,
-                }));
-
-                result = u3.concat(g3);
-
-                break;
-
-            default:
-                result = [];
-                break;
-        }
-
-        result = await Promise.all(result);
-
-        this.setItems(result, true);
-    }
-
-    addOption(value, label) {
-        if (!_.isNil(label)) {
-            const option = {
-                value: value.value,
-                label: value.label,
-            };
-
-            // Check for unique options if configured.
-            if (this.component.uniqueOptions && this.selectOptions.find((item) => _.isEqual(item.value, option.value))) {
-                return;
-            }
-
-            // Push the option into the selectOptions array.
-            this.selectOptions.push(option);
-
-            if (this.refs.selectContainer && this.component.widget === 'html5') {
-                const container = document.createElement('div');
-                container.innerHTML = label.trim();
-                option.element = container.firstChild;
-                this.refs.selectContainer.appendChild(option.element);
-            }
-        }
-    }
-
+    // Define the component's preview *DO NOT EDIT*
     render() {
         return super.render();
     }

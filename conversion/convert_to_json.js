@@ -21,9 +21,9 @@ const formJsContent = fs.readFileSync(path.join(__dirname, '..', 'form', 'public
 const components = formJsContent.slice(formJsContent.indexOf('['), formJsContent.lastIndexOf(']') + 1);
 
 const cleanedComponents = components
-    .replace(/\\r\\n/g, '')             // Remove Windows-style newlines (\r\n)
-    .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Add double quotes around keys
-    .replace(/,(\s*[}\]])/g, '$1');      // Remove trailing commas before } or ]
+    .replace(/\\r\\n/g, '')                         // Remove Windows-style newlines (\r\n)
+    .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3')   // Add double quotes around keys
+    .replace(/,(\s*[}\]])/g, '$1');                 // Remove trailing commas before } or ]
 
 const definition = {
     "formioFormDefinition":{
@@ -55,17 +55,14 @@ function getFormattedDateTime() {
            `${String(now.getMilliseconds()).padStart(3, '0')}${timezoneOffset}`;
 }
 
-// Generate random GUID
-function generateGUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = Math.random() * 16 | 0;
-        const v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
+// Generate random GUID as id
+const id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+});
 
-const id = generateGUID();
-
+// Write the form JSON file
 fs.writeFileSync(path.join(__dirname, '..', `${FORM_NAME}.json`), JSON.stringify({
     "id": id,
     "name": FORM_NAME,

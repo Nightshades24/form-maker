@@ -1,4 +1,44 @@
+// Define getValues function to get the list of processes
+async function getValues() {
+    const processes = await fetch('/process/api/processes/editable').then(async res => (await res.json()).processes);
+
+    return processes.map(process => ({
+        id: process.id,
+        displayName: `${process.name} (${process.deployed ? "" : "not "}deployed)`
+    }));
+}
+
+window.getValues = getValues;
+
 class ProcessStartComponent extends Formio.Components.components.button {
+    // Activate the selected process when the button is clicked
+    async onClick() {
+        const id = this.component.processId;
+        const businessKey = this.component.businessKey || "";
+
+        await fetch(`https://dms.blending.nl/process/processes/${id}/instances`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                businessKey: businessKey,
+                variables: {}
+            })
+        }).then(async res => {
+            if (res.ok) {
+                console.log("startProcess event received", {
+                    "processId": id,
+                    "businessKey": businessKey
+                })
+            }
+            else {
+                console.error(await res.text());
+            }
+        })
+    }
+
+    // Define the JSON schema for the component *DO NOT EDIT*
     static schema() {
         return {
             "input": true,
@@ -76,6 +116,7 @@ class ProcessStartComponent extends Formio.Components.components.button {
         };
     }
 
+    // Define the edit menu of the component *DO NOT EDIT*
     static editForm() {
         return {
             "components": [
@@ -1031,6 +1072,7 @@ class ProcessStartComponent extends Formio.Components.components.button {
         };
     }
 
+    // Add the component to the Formio.Components object *DO NOT EDIT*
     static get builderInfo() {
         return {
             title: 'Process Start',
@@ -1041,50 +1083,13 @@ class ProcessStartComponent extends Formio.Components.components.button {
         };
     }
 
+    // Define the component's preview *DO NOT EDIT*
     render() {
         return super.render(`
             <button class="btn btn-primary">Start process</button>
         `);
     }
-
-    async onClick() {
-        const id = this.component.processId;
-        const businessKey = this.component.businessKey || "";
-
-        await fetch(`https://dms.blending.nl/process/processes/${id}/instances`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                businessKey: businessKey,
-                variables: {}
-            })
-        }).then(async res => {
-            if (res.ok) {
-                console.log("startProcess event received", {
-                    "processId": id,
-                    "businessKey": businessKey
-                })
-            }
-            else {
-                console.error(await res.text());
-            }
-        })
-    }
 }
 
 // Register the component
 Formio.Components.addComponent('procStartBtn', ProcessStartComponent);
-
-// Define getValues function to get the list of processes
-async function getValues() {
-    const processes = await fetch('/process/api/processes/editable').then(async res => (await res.json()).processes);
-
-    return processes.map(process => ({
-        id: process.id,
-        displayName: `${process.name} (${process.deployed ? "" : "not "}deployed)`
-    }));
-}
-
-window.getValues = getValues;
