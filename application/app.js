@@ -5,18 +5,22 @@ const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const exec = require('child_process').exec;
 
+const UPDATE = false;
+
 // Port number
 const PORT = 1000;
 
 const app = express();
 
-const liveReloadServer = livereload.createServer();
-liveReloadServer.watch([
-    path.join(__dirname, 'public'), 
-    path.join(__dirname, '..', 'builder', 'public'),
-    path.join(__dirname, '..', 'form', 'public'),
-]); // Watch changes in /public
-app.use(connectLivereload()); // Enable LiveReload in Express
+if (UPDATE) {
+    const liveReloadServer = livereload.createServer();
+    liveReloadServer.watch([
+        path.join(__dirname, 'public'), 
+        path.join(__dirname, '..', 'builder', 'public'),
+        path.join(__dirname, '..', 'form', 'public'),
+    ]); // Watch changes in /public
+    app.use(connectLivereload()); // Enable LiveReload in Express
+}
 
 // Import the routers from the builder and form modules
 const builderRouter = require(path.join(__dirname, '..', 'builder', 'router'));
@@ -85,10 +89,12 @@ app.listen(PORT, () => {
     console.info(' [server] close this terminal or press Ctrl+C to quit.\n');
 });
 
-// Reload browser when files change
-liveReloadServer.server.once("connection", () => {
-    console.info("refreshing homepage...");
-    setTimeout(() => {
-        liveReloadServer.refresh("/");
-    }, 100);
-});
+if (UPDATE) {
+    // Reload browser when files change
+    liveReloadServer.server.once("connection", () => {
+        console.info("refreshing homepage...");
+        setTimeout(() => {
+            liveReloadServer.refresh("/");
+        }, 100);
+    });
+}

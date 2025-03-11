@@ -57,6 +57,15 @@ Formio.createForm(document.getElementById('dvf-form-viewer'), {
             "tableView": false
         },
         {
+            "label": "Text Field",
+            "applyMaskOn": "change",
+            "tableView": true,
+            "validateWhenHidden": false,
+            "key": "textField",
+            "type": "textfield",
+            "input": true
+        },
+        {
             "label": "Upload",
             "tableView": false,
             "webcam": false,

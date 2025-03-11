@@ -13,10 +13,14 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // LiveReload setup
+const UPDATE = false;
 const RL_PORT = 1010;
-const liveReloadServer = livereload.createServer({ port: RL_PORT });
-liveReloadServer.watch(path.join(__dirname, 'public'));
-router.use(connectLivereload({ port: RL_PORT }));
+
+if (UPDATE) {
+    const liveReloadServer = livereload.createServer({ port: RL_PORT });
+    liveReloadServer.watch(path.join(__dirname, 'public'));
+    router.use(connectLivereload({ port: RL_PORT }));
+}
 
 // Serve static files from the builder's public folder
 router.use(express.static(path.join(__dirname, 'public')));
@@ -114,12 +118,14 @@ router.use('/prod', createProxyMiddleware({
     }
 }));
 
-// LiveReload refresh logic
-liveReloadServer.server.once("connection", () => {
-    console.info("refreshing builder...");
-    setTimeout(() => {
-        liveReloadServer.refresh("/");
-    }, 100);
-});
+if (UPDATE) {
+    // LiveReload refresh logic
+    liveReloadServer.server.once("connection", () => {
+        console.info("refreshing builder...");
+        setTimeout(() => {
+            liveReloadServer.refresh("/");
+        }, 100);
+    });
+}
 
 module.exports = router;
