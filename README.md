@@ -31,7 +31,11 @@ To start the application, execute `start.bat`.
 This will show a loading bar, and open a command prompt window in the background which runs the following commands:
 
 ```bash
+cd path/to/form-maker/builder
+npm install
 cd path/to/form-maker/form
+npm install
+cd path/to/form-maker/application
 npm install
 npm run dev
 ```
