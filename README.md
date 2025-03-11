@@ -124,7 +124,6 @@ form-maker/
 |
 ├── form/
 │   ├── public/
-|   │   ├── images/
 │   │   ├── js/
 │   │   |   ├── form.js
 │   │   |   └── main.js
