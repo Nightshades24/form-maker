@@ -41,10 +41,8 @@ npm run dev
 ```
 and then open the browser at `http://localhost:1000`.
 The first time you run the project, it will probably take more time to start than the loading bar suggests, because it needs to install all the dependencies.
-This means that when the loading bar is finished, the project might still be installing dependencies and the browser might show that it can't connect to the server.
-This is normal. Just wait a bit longer and refresh the page.
-After the first time, it will start faster and the loading bar will be more accurate.
-If the start script fails, you can also run the commands manually in the terminal
+After the first time, it will start faster.
+If the start script fails, you can also run the commands manually in the terminal.
 
 When the project has started, you are greeted with a homepage.
 Here you first need to specify on which DMS you are going to work and add a custom Bearer token **for that DMS**.
