@@ -6,6 +6,7 @@ let variables;
 
 function toggleSlide(e) {
     e.preventDefault(); // Prevent link navigation
+
     const container = document.querySelector('.container');
     const importBtn = document.getElementById('importBtn');
     const panel = document.getElementById('selectionPanel');
@@ -19,26 +20,21 @@ function toggleSlide(e) {
     buildBtn.classList.toggle('slide-out');
     previewBtn.classList.toggle('slide-out');
 
-    // Are we sliding left now?
-    const isSlideLeft = container.classList.contains('slide-left');
-
     // Highlight the Import/Export button if slid left
-    if (isSlideLeft) {
+    if (container.classList.contains('slide-left')) {
         importBtn.classList.add('selected');
         // Clear the form when sliding in
         formName.value = '';
         authorSelect.selectedIndex = 0;
-        // Reset radio buttons
         radioGroup.forEach(radio => {
             radio.checked = false;
         });
-        // Hide the dropdown (only show on export)
         authorSelect.style.display = 'none';
+
         // Show the selection panel
         panel.classList.add('show');
     } else {
         importBtn.classList.remove('selected');
-        // Hide the selection panel
         panel.classList.remove('show');
     }
     // Update the Save button state
@@ -95,7 +91,7 @@ async function setSettings() {
     env.value = variables.DMS;
     bearer.value = variables.BEARER;
 
-    // Disable builder and preview buttons by toggling the .disabled class
+    // Disable builder and preview buttons by toggling the .disabled class if the settings are not set
     document.getElementById('builder').classList.toggle('disabled', variables.DMS == "" || variables.BEARER == "");
     document.getElementById('preview').classList.toggle('disabled', variables.DMS == "" || variables.BEARER == "");
 }
@@ -116,7 +112,6 @@ function validateForm() {
         authorSelect.style.display = 'none';
     }
 
-    // Check if a name is entered
     const nameEntered = formName.value.trim().length > 0 && !formName.value.includes('\"') && !formName.value.includes('\'');
 
     // If 'export' is selected, require author; if 'import', skip
@@ -124,7 +119,6 @@ function validateForm() {
         ? (authorSelect.value !== "")
         : true;
 
-    // We also need a mode selected
     const modeSelected = !!selectedMode;
 
     // Enable if all conditions are met
@@ -136,13 +130,9 @@ function validateSettings() {
     const env = document.getElementById('env').value;
     const bearer = document.getElementById('bearer').value;
 
-    // Check if the settings are valid
     const settingsValid = env && bearer;
-
-    // Check if the settings are changed
     const settingsChanged = env !== variables.DMS || bearer !== variables.BEARER;
 
-    // Enable the save button if the settings are valid and changed
     document.getElementById("save-button").disabled = !(settingsValid && settingsChanged);
 }
 
@@ -235,16 +225,16 @@ window.onload = function () {
     document.getElementById('env').addEventListener('input', validateSettings);
     document.getElementById('bearer').addEventListener('input', validateSettings);
 
-    // Disable the buttons if the settings are not set
+    // Disable the logic of the buttons if the settings are not set
     document.getElementById('builder').addEventListener('click', (e) => {
         if (document.getElementById('builder').classList.contains('disabled')) {
-            e.preventDefault();
+            e.preventDefault(); // Prevent link navigation
             alert('Please set the DMS and Bearer Key in the settings');
         }
     });
     document.getElementById('preview').addEventListener('click', (e) => {
         if (document.getElementById('preview').classList.contains('disabled')) {
-            e.preventDefault();
+            e.preventDefault(); // Prevent link navigation
             alert('Please set the DMS and Bearer Key in the settings');
         }
     });

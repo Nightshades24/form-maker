@@ -5,6 +5,7 @@ const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
 const exec = require('child_process').exec;
 
+// Enable/disable LiveReload for full application
 const UPDATE = false;
 
 // Port number

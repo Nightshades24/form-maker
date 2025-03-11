@@ -4,7 +4,6 @@ body {
     font-family: 'Roboto', Arial, sans-serif;
     background-color: #fff;
     overflow: hidden;
-    /* Hide any horizontal scrollbars */
 }
 
 #authorSelect {
@@ -31,12 +30,9 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Spacing between squares */
     gap: 180px;
     height: 60vh;
-    /* Full-height container minus some space for title */
     transition: transform 0.6s ease;
-    /* Smooth slide animation */
 }
 
 /* Shift container to the left when .slide-left is applied */
@@ -54,7 +50,6 @@ h1 {
     width: 200px;
     height: 200px;
     background-color: #1f89c3;
-    /* Primary color */
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -67,7 +62,6 @@ h1 {
     font-weight: 600;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
-    /* Make it clear these are clickable */
 }
 
 .button-card:hover {
@@ -93,12 +87,11 @@ h1 {
     box-shadow: 0 5px 110px #5ba6ce;
 }
 
-/* SELECTION PANEL */
+/* Import/Export panel */
 .selection-panel {
     position: absolute;
     top: 40vh;
     right: -400px;
-    /* Start off-screen to the right */
     transform: translateY(-50%);
     width: 320px;
     padding: 20px;
@@ -116,7 +109,6 @@ h1 {
     opacity: 1;
 }
 
-/* Example styling for the panel content */
 .selection-panel h2 {
     margin-bottom: 20px;
     font-size: 1.8em;
@@ -178,6 +170,7 @@ h1 {
     transform: scale(0.98);
 }
 
+/* Settings container */
 .input-container {
     display: flex;
     flex-direction: column;
@@ -204,6 +197,7 @@ h1 {
     outline: none;
 }
 
+/* Save button */
 .save-button {
     background-color: #1f89c3;
     color: white;

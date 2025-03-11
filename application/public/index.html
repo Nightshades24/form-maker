@@ -15,13 +15,11 @@
 <body>
     <div class="outer-wrapper">
         <h1>Form Builder</h1>
-        <!-- The three main buttons -->
+
+        <!-- Buttons for Builder, Preview, and Import/Export -->
         <div class="container"> 
-            <!-- Builder -->
             <a id="builder" class="button-card disabled" href="/builder" target="_blank">Builder</a>
-            <!-- Preview -->
             <a id="preview" class="button-card disabled" href="/form" target="_blank">Preview</a>
-            <!-- Import/Export -->
             <a id="importBtn" class="button-card" href="#" onclick="toggleSlide(event)">Import/Export</a>
         </div>
 
@@ -29,7 +27,6 @@
         <div class="selection-panel" id="selectionPanel">
             <h2>Selection</h2>
 
-            <!-- Radio buttons for Import/Export -->
             <div class="radio-group">
                 <label>
                     <input type="radio" name="mode" value="import">
@@ -41,18 +38,18 @@
                 </label>
             </div>
 
-            <!-- Form name input -->
             <input type="text" placeholder="Enter your form name..." id="formName" />
 
-            <!-- Author dropdown (hidden by default, shown only if 'export' is chosen) -->
             <select id="authorSelect">
                 <option value="" disabled selected>Select author...</option>
             </select>
 
-            <!-- Submit button (disabled until conditions met) -->
             <button id="submitBtn" disabled onclick="submit()">Submit</button>
         </div>
+
+        <!-- Settings container -->
         <div class="input-container">
+
             <div style="display: flex; align-items: end; flex-direction: column; padding-right: 80px;">
                 <label for="env" style="padding-right: 32px;">Environment:
                     <select id="env">
@@ -61,12 +58,14 @@
                         <option value="https://demo.doccomplete.nl">https://demo.doccomplete.nl</option>
                     </select>
                 </label>
+
                 <label for="bearer">Bearer:
                     <input id="bearer" type="password" placeholder="Enter the Bearer API key">
                     <i id="show-key" class="fas fa-eye" style="cursor: pointer; padding-left: 10px; width: 18px;"
                         onclick="toggleBearerKey()"></i>
                 </label>
             </div>
+
             <button id="save-button" class="save-button" disabled onclick="save()">Save</button>
         </div>
     </div>
