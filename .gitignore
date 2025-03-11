@@ -1,7 +1,5 @@
-# Custom form
-custom_form.json
-variables.json
-js/
+# Ignore custom forms and generated varaibles
+*.json
 
 # Logs
 logs
